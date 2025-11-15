@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HealthConnect - Your trusted health partner for online consultations and medical guidance">
+    <title>HealthConnect - Your Health Partner</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+        
+        .dark {
+            --bg-primary: #1e293b;
+            --bg-secondary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
+        }
+        
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .symptom-item {
+            background-color: #e0f2fe;
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin: 5px;
+            display: inline-block;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .dark .symptom-item {
+            background-color: #334155;
+            color: #e2e8f0;
+        }
+        
+        .symptom-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-active {
+            color: #3b82f6;
+            border-bottom: 2px solid #3b82f6;
+        }
+        
+        .status-online {
+            background-color: #10b981;
+        }
+        
+        .status-offline {
+            background-color: #ef4444;
+        }
+        
+        .status-busy {
+            background-color: #f59e0b;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .emergency-alert {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%), url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translate(0, 0px); }
+            50% { transform: translate(0, -15px); }
+            100% { transform: translate(0, -0px); }
+        }
+        
+        .doctor-card {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .doctor-card:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+        
+        .ai-option {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .ai-option:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+        }
+        
+        .doctor-option {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .doctor-option:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        .search-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        
+        .search-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+        
+        .search-container:hover::before {
+            animation: shine 1.5s;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid #3b82f6;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #3b82f6; }
+        }
+        
+        .pulse-slow {
+            animation: pulse-slow 2s infinite;
+        }
+        
+        @keyframes pulse-slow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .rotate-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .rotate-3d:hover {
+            transform: rotateY(15deg);
+        }
+        
+        /* New styles for about page */
+        .about-hero {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%), url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .team-member {
+            transition: all 0.3s ease;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-10px);
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 17px;
+            width: 2px;
+            height: calc(100% + 13px);
+            background-color: #e2e8f0;
+        }
+        
+        .dark .timeline-item::after {
+            background-color: #475569;
+        }
+        
+        .timeline-item:last-child::after {
+            display: none;
+        }
+        
+        .value-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .value-card:hover {
+            border-left-color: #3b82f6;
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-stethoscope text-blue-500 text-2xl mr-2 floating"></i>
+                    <span class="text-xl font-bold text-gray-800 dark:text-white">HealthConnect</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="userprofile.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Home</a>
+                    <a href="doctor.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Find Doctors</a>
+                    <a href="Appointment.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">My Appointments</a>
+                    <a href="emergency.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Emergency</a>
+                    <a href="#" class="text-blue-500 font-medium nav-active">About</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 theme-toggle" aria-label="Toggle theme">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notificationBtn" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 relative" aria-label="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div id="notificationDropdown" class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 hidden border border-gray-200 dark:border-gray-700">
+                            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="font-bold text-gray-800 dark:text-white">Notifications</h3>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-video text-blue-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Video session with Dr. Sarah Johnson</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Starts in 15 minutes</p>
+                                            <p class="text-xs text-blue-500 mt-1">Join Now</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-calendar-check text-green-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Appointment confirmed</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">With Dr. Michael Chen on May 25</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-pills text-yellow-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Medicine reminder</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Take Metformin after breakfast</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-user-md text-purple-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">New doctor available</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Dr. Emily Davis is now online</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 text-center border-t border-gray-200 dark:border-gray-700">
+                                <a href="#" class="text-sm text-blue-500 font-medium">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="sessionBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center pulse-slow">
+                        <i class="fas fa-video mr-2"></i> Start Session
+                    </button>
+                    <div class="relative">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=3b82f6&color=fff" alt="User Profile" class="w-10 h-10 rounded-full cursor-pointer rotate-3d">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Hero Section -->
+    <section class="about-hero text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 fade-in">About HealthConnect</h1>
+            <p class="text-xl mb-8 max-w-3xl mx-auto">Revolutionizing healthcare through technology, compassion, and innovation</p>
+            <div class="flex justify-center space-x-4">
+                <a href="#mission" class="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-bold text-lg flex items-center card-hover">
+                    Our Mission
+                </a>
+                <a href="#team" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 px-6 py-3 rounded-lg font-bold text-lg flex items-center card-hover">
+                    Meet Our Team
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section id="mission" class="py-16 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">Our Mission & Vision</h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">We're committed to making quality healthcare accessible, affordable, and convenient for everyone</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-8 card-hover">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-bullseye text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 text-center">Our Mission</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-center">To democratize healthcare by leveraging technology to connect patients with medical professionals, providing timely, personalized, and high-quality care regardless of geographical or socioeconomic barriers.</p>
+                </div>
+                
+                <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-8 card-hover">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-eye text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 text-center">Our Vision</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-center">A world where everyone has instant access to quality healthcare, empowered by technology that anticipates needs, personalizes treatment, and improves health outcomes for all communities.</p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-8">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">Our Story</h3>
+                <div class="max-w-4xl mx-auto">
+                    <div class="timeline-item">
+                        <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-2">2018 - The Beginning</h4>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">HealthConnect was founded by a team of doctors and technologists who recognized the growing need for accessible healthcare solutions. Our journey began with a simple idea: connecting patients with doctors through video consultations.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-2">2019 - Expansion</h4>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">We expanded our services to include prescription management, medical records storage, and integrated with local pharmacies for medication delivery. Our user base grew to over 50,000 patients.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-2">2020 - Pandemic Response</h4>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">During the global health crisis, we launched free COVID-19 screening services and partnered with government health agencies to provide virtual care to isolated communities, serving over 200,000 patients.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-2">2021 - AI Integration</h4>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">We introduced our AI health assistant, providing preliminary assessments and health guidance. Our platform now featured predictive analytics for better health outcomes.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-2">2022 - Today</h4>
+                        <p class="text-gray-600 dark:text-gray-400">With over 500 healthcare providers and 1 million registered users, HealthConnect continues to innovate with features like remote monitoring, mental health support, and specialized care programs for chronic conditions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">Our Values</h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">These principles guide everything we do at HealthConnect</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 value-card">
+                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-heart text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Compassion</h3>
+                    <p class="text-gray-600 dark:text-gray-400">We approach every interaction with empathy, understanding that healthcare is personal and often stressful for patients and families.</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 value-card">
+                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-shield-alt text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Integrity</h3>
+                    <p class="text-gray-600 dark:text-gray-400">We maintain the highest ethical standards, ensuring patient privacy, data security, and transparent practices in all our operations.</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 value-card">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-lightbulb text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Innovation</h3>
+                    <p class="text-gray-600 dark:text-gray-400">We continuously explore new technologies and approaches to improve healthcare delivery, accessibility, and patient outcomes.</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 value-card">
+                    <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-users text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Collaboration</h3>
+                    <p class="text-gray-600 dark:text-gray-400">We believe in the power of teamwork - between patients and providers, across specialties, and with healthcare organizations.</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 value-card">
+                    <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-award text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Excellence</h3>
+                    <p class="text-gray-600 dark:text-gray-400">We strive for the highest quality in every aspect of our service, from user experience to medical care standards and support.</p>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 value-card">
+                    <div class="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-globe-americas text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-3">Accessibility</h3>
+                    <p class="text-gray-600 dark:text-gray-400">We're committed to breaking down barriers to healthcare, making our services available to diverse communities regardless of location or background.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="py-16 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">Meet Our Team</h2>
+                <p class="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">The passionate professionals behind HealthConnect's mission to transform healthcare</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 text-center team-member">
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Dr. Sarah Johnson" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Dr. Sarah Johnson</h3>
+                    <p class="text-blue-500 mb-2">Chief Medical Officer</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Board-certified cardiologist with 15+ years of clinical experience and a passion for digital health innovation.</p>
+                </div>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 text-center team-member">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Michael Chen" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Michael Chen</h3>
+                    <p class="text-blue-500 mb-2">CEO & Co-Founder</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Former healthcare technology executive with a vision for making quality care accessible to everyone.</p>
+                </div>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 text-center team-member">
+                    <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Dr. Emily Davis" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Dr. Emily Davis</h3>
+                    <p class="text-blue-500 mb-2">Head of Medical Operations</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Pediatrician and healthcare administrator focused on optimizing patient care pathways and provider experience.</p>
+                </div>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 text-center team-member">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Jennifer Martinez" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Jennifer Martinez</h3>
+                    <p class="text-blue-500 mb-2">Chief Technology Officer</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Software engineer and AI specialist leading our technology development with a focus on security and scalability.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 gradient-bg text-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">HealthConnect by the Numbers</h2>
+                <p class="text-blue-100 max-w-3xl mx-auto">Our impact in transforming healthcare delivery</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center stat-card">
+                    <div class="text-4xl font-bold mb-2">1M+</div>
+                    <p class="text-blue-100">Patients Served</p>
+                </div>
+                
+                <div class="text-center stat-card">
+                    <div class="text-4xl font-bold mb-2">500+</div>
+                    <p class="text-blue-100">Healthcare Providers</p>
+                </div>
+                
+                <div class="text-center stat-card">
+                    <div class="text-4xl font-bold mb-2">50+</div>
+                    <p class="text-blue-100">Specialties Covered</p>
+                </div>
+                
+                <div class="text-center stat-card">
+                    <div class="text-4xl font-bold mb-2">24/7</div>
+                    <p class="text-blue-100">Service Availability</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">HealthConnect</h3>
+                    <p class="text-gray-400">Your trusted health partner for online consultations and medical guidance.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="doctor.html" class="text-gray-400 hover:text-white">Find a Doctor</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Health Articles</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Download App</h3>
+                    <div class="flex space-x-2">
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center card-hover">
+                            <i class="fab fa-apple mr-2"></i> App Store
+                        </button>
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center card-hover">
+                            <i class="fab fa-google-play mr-2"></i> Play Store
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 HealthConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const body = document.body;
+            
+            // Check for saved theme preference or default to light
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            body.className = currentTheme;
+            updateThemeIcon(currentTheme);
+            
+            themeToggle.addEventListener('click', function() {
+                if (body.classList.contains('light')) {
+                    body.classList.replace('light', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    updateThemeIcon('dark');
+                } else {
+                    body.classList.replace('dark', 'light');
+                    localStorage.setItem('theme', 'light');
+                    updateThemeIcon('light');
+                }
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                }
+            }
+            
+            // Notification dropdown functionality
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            notificationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                notificationDropdown.classList.add('hidden');
+            });
+            
+            // Session button functionality
+            const sessionBtn = document.getElementById('sessionBtn');
+            sessionBtn.addEventListener('click', function() {
+                alert('Starting video session with your doctor...');
+                // In a real application, this would connect to the video consultation service
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency - HealthConnect</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #ef4444;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+        
+        .dark {
+            --bg-primary: #1e293b;
+            --bg-secondary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
+        }
+        
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-active {
+            color: #3b82f6;
+            border-bottom: 2px solid #3b82f6;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .emergency-pulse {
+            animation: emergency-pulse 2s infinite;
+        }
+        
+        @keyframes emergency-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translate(0, 0px); }
+            50% { transform: translate(0, -10px); }
+            100% { transform: translate(0, -0px); }
+        }
+        
+        .pulse-slow {
+            animation: pulse-slow 2s infinite;
+        }
+        
+        @keyframes pulse-slow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .siren {
+            animation: siren 1s infinite alternate;
+        }
+        
+        @keyframes siren {
+            0% { background-color: #ef4444; }
+            100% { background-color: #f87171; }
+        }
+        
+        .emergency-card {
+            border-left: 4px solid #ef4444;
+        }
+        
+        .shake {
+            animation: shake 0.5s infinite;
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-stethoscope text-blue-500 text-2xl mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800 dark:text-white">HealthConnect</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="userprofile.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Home</a>
+                    <a href="doctor.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Find Doctors</a>
+                    <a href="Appointment.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">My Appointments</a>
+                    <a href="#" class="text-blue-500 font-medium nav-active">Emergency</a>
+                    <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">About</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 theme-toggle">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notificationBtn" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 relative">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div id="notificationDropdown" class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 hidden border border-gray-200 dark:border-gray-700">
+                            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="font-bold text-gray-800 dark:text-white">Notifications</h3>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-video text-blue-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Video session with Dr. Sarah Johnson</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Starts in 15 minutes</p>
+                                            <p class="text-xs text-blue-500 mt-1">Join Now</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-calendar-check text-green-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Appointment confirmed</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">With Dr. Michael Chen on May 25</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-pills text-yellow-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Medicine reminder</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Take Metformin after breakfast</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 text-center border-t border-gray-200 dark:border-gray-700">
+                                <a href="#" class="text-sm text-blue-500 font-medium">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="sessionBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center pulse-slow">
+                        <i class="fas fa-video mr-2"></i> Start Session
+                    </button>
+                    <div class="relative">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=3b82f6&color=fff" alt="User" class="w-10 h-10 rounded-full cursor-pointer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Emergency Alert Banner -->
+    <div class="gradient-bg text-white py-4 siren">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-2xl mr-3 shake"></i>
+                    <div>
+                        <h2 class="text-xl font-bold">EMERGENCY ALERT</h2>
+                        <p class="text-sm">Immediate medical assistance available 24/7</p>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <p class="text-sm"><i class="fas fa-phone-alt mr-2"></i> Emergency Hotline: <span class="font-bold">911</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Emergency Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <!-- Emergency Call Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 emergency-card card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="w-14 h-14 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mr-4 emergency-pulse">
+                        <i class="fas fa-phone-alt text-red-500 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Emergency Call</h2>
+                        <p class="text-gray-600 dark:text-gray-400">Connect immediately with emergency services</p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">For life-threatening emergencies, call 911 immediately. Our system will connect you with the nearest emergency services.</p>
+                    
+                    <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 mb-4">
+                        <h3 class="font-bold text-red-700 dark:text-red-300 mb-2">When to call 911:</h3>
+                        <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                            <li>Chest pain or pressure</li>
+                            <li>Difficulty breathing</li>
+                            <li>Severe bleeding</li>
+                            <li>Sudden weakness or numbness</li>
+                            <li>Severe burns or injuries</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <button id="callEmergency" class="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-lg font-bold text-lg flex items-center justify-center emergency-pulse">
+                    <i class="fas fa-phone-alt mr-3"></i> CALL 911 NOW
+                </button>
+            </div>
+            
+            <!-- Emergency Consultation Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 emergency-card card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4 floating">
+                        <i class="fas fa-user-md text-blue-500 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Urgent Video Consultation</h2>
+                        <p class="text-gray-600 dark:text-gray-400">Connect with an emergency doctor now</p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">For urgent but non-life-threatening conditions, connect with an emergency physician within minutes.</p>
+                    
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+                        <h3 class="font-bold text-blue-700 dark:text-blue-300 mb-2">Available for conditions like:</h3>
+                        <ul class="list-disc list-inside text-sm text-blue-600 dark:text-blue-400 space-y-1">
+                            <li>High fever</li>
+                            <li>Severe allergic reactions</li>
+                            <li>Minor fractures</li>
+                            <li>Urinary tract infections</li>
+                            <li>Severe migraines</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flex items-center text-green-600 dark:text-green-400">
+                        <i class="fas fa-circle text-xs mr-2"></i>
+                        <span class="font-medium">5 emergency doctors available now</span>
+                    </div>
+                </div>
+                
+                <button id="startEmergencyConsult" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg font-bold text-lg flex items-center justify-center pulse-slow">
+                    <i class="fas fa-video mr-3"></i> START EMERGENCY CONSULTATION
+                </button>
+            </div>
+        </div>
+        
+        <!-- Emergency Resources -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Emergency Resources</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Nearby Hospitals -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-hospital text-red-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">Nearby Hospitals</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white">City General Hospital</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">1.2 miles away</p>
+                            </div>
+                            <span class="text-green-600 dark:text-green-400 font-medium">24/7 ER</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white">Community Medical Center</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">3.5 miles away</p>
+                            </div>
+                            <span class="text-green-600 dark:text-green-400 font-medium">24/7 ER</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white">Westside Urgent Care</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">2.1 miles away</p>
+                            </div>
+                            <span class="text-yellow-600 dark:text-yellow-400 font-medium">Open until 10 PM</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full mt-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-2 rounded-lg font-medium">
+                        View All Hospitals
+                    </button>
+                </div>
+                
+                <!-- First Aid Guide -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-first-aid text-green-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">First Aid Guide</h3>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
+                            <h4 class="font-medium text-gray-800 dark:text-white">CPR Instructions</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Step-by-step guide for cardiopulmonary resuscitation</p>
+                        </div>
+                        
+                        <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
+                            <h4 class="font-medium text-gray-800 dark:text-white">Choking Response</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Heimlich maneuver for adults and children</p>
+                        </div>
+                        
+                        <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
+                            <h4 class="font-medium text-gray-800 dark:text-white">Severe Bleeding</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">How to control bleeding until help arrives</p>
+                        </div>
+                        
+                        <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
+                            <h4 class="font-medium text-gray-800 dark:text-white">Allergic Reactions</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Using epinephrine auto-injectors</p>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full mt-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-2 rounded-lg font-medium">
+                        View All Guides
+                    </button>
+                </div>
+                
+                <!-- Emergency Contacts -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-address-book text-blue-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">Emergency Contacts</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white">Poison Control</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">24/7 helpline</p>
+                            </div>
+                            <span class="text-blue-600 dark:text-blue-400 font-medium">1-800-222-1222</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white">Mental Health Crisis</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Suicide prevention</p>
+                            </div>
+                            <span class="text-blue-600 dark:text-blue-400 font-medium">988</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white">Domestic Violence</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">24/7 hotline</p>
+                            </div>
+                            <span class="text-blue-600 dark:text-blue-400 font-medium">1-800-799-7233</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-gray-800 dark:text-white">Your Primary Doctor</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Dr. Sarah Johnson</p>
+                            </div>
+                            <span class="text-blue-600 dark:text-blue-400 font-medium">(555) 123-4567</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full mt-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-2 rounded-lg font-medium">
+                        Add Emergency Contact
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Emergency Symptoms Checker -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Emergency Symptoms Checker</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">Select your symptoms to determine the urgency of your condition:</p>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 symptom-check">
+                            <input type="checkbox" id="symptom1" class="mr-3">
+                            <label for="symptom1" class="text-gray-800 dark:text-white">Chest Pain</label>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 symptom-check">
+                            <input type="checkbox" id="symptom2" class="mr-3">
+                            <label for="symptom2" class="text-gray-800 dark:text-white">Difficulty Breathing</label>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 symptom-check">
+                            <input type="checkbox" id="symptom3" class="mr-3">
+                            <label for="symptom3" class="text-gray-800 dark:text-white">Severe Bleeding</label>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 symptom-check">
+                            <input type="checkbox" id="symptom4" class="mr-3">
+                            <label for="symptom4" class="text-gray-800 dark:text-white">Sudden Weakness</label>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 symptom-check">
+                            <input type="checkbox" id="symptom5" class="mr-3">
+                            <label for="symptom5" class="text-gray-800 dark:text-white">High Fever</label>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 symptom-check">
+                            <input type="checkbox" id="symptom6" class="mr-3">
+                            <label for="symptom6" class="text-gray-800 dark:text-white">Severe Headache</label>
+                        </div>
+                    </div>
+                    
+                    <button id="checkSymptoms" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium">
+                        Check Symptoms
+                    </button>
+                </div>
+                
+                <div id="symptomResult" class="hidden">
+                    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-2"></i>
+                            <h3 class="text-lg font-bold text-red-700 dark:text-red-300">EMERGENCY - CALL 911</h3>
+                        </div>
+                        <p class="text-red-600 dark:text-red-400 mb-3">Your symptoms indicate a potential life-threatening condition. Please call 911 immediately or proceed to the nearest emergency room.</p>
+                        <div class="flex space-x-3">
+                            <button class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium">
+                                Call 911
+                            </button>
+                            <button class="flex-1 bg-white hover:bg-gray-100 text-red-500 border border-red-500 py-2 rounded-lg font-medium">
+                                Find Nearest ER
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Emergency Preparedness -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Emergency Preparedness</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3">Create Your Emergency Plan</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">Prepare for emergencies before they happen with a personalized plan.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            <span class="text-gray-800 dark:text-white">Emergency contacts saved</span>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <i class="fas fa-times-circle text-red-500 mr-3"></i>
+                            <span class="text-gray-800 dark:text-white">Medical information not completed</span>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <i class="fas fa-times-circle text-red-500 mr-3"></i>
+                            <span class="text-gray-800 dark:text-white">Emergency kit not prepared</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium">
+                        Create Emergency Plan
+                    </button>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-3">Emergency Kit Checklist</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">Essential items for your home emergency kit:</p>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2 text-sm"></i>
+                            <span class="text-gray-700 dark:text-gray-300 text-sm">First aid kit</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2 text-sm"></i>
+                            <span class="text-gray-700 dark:text-gray-300 text-sm">Prescription medications</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-times text-red-500 mr-2 text-sm"></i>
+                            <span class="text-gray-700 dark:text-gray-300 text-sm">Flashlight & batteries</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-times text-red-500 mr-2 text-sm"></i>
+                            <span class="text-gray-700 dark:text-gray-300 text-sm">Non-perishable food</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-times text-red-500 mr-2 text-sm"></i>
+                            <span class="text-gray-700 dark:text-gray-300 text-sm">Water (1 gallon per person)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2 text-sm"></i>
+                            <span class="text-gray-700 dark:text-gray-300 text-sm">Personal documents</span>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full mt-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-3 rounded-lg font-medium">
+                        Download Checklist
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">HealthConnect</h3>
+                    <p class="text-gray-400">Your trusted health partner for online consultations and medical guidance.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Find a Doctor</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Symptoms Checker</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Medicine Reminder</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Health Articles</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Download App</h3>
+                    <div class="flex space-x-2">
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center card-hover">
+                            <i class="fab fa-apple mr-2"></i> App Store
+                        </button>
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center card-hover">
+                            <i class="fab fa-google-play mr-2"></i> Play Store
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 HealthConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const body = document.body;
+            
+            // Check for saved theme preference or default to light
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            body.className = currentTheme;
+            updateThemeIcon(currentTheme);
+            
+            themeToggle.addEventListener('click', function() {
+                if (body.classList.contains('light')) {
+                    body.classList.replace('light', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    updateThemeIcon('dark');
+                } else {
+                    body.classList.replace('dark', 'light');
+                    localStorage.setItem('theme', 'light');
+                    updateThemeIcon('light');
+                }
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                }
+            }
+            
+            // Notification dropdown functionality
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            notificationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                notificationDropdown.classList.add('hidden');
+            });
+            
+            // Emergency call button
+            const callEmergency = document.getElementById('callEmergency');
+            callEmergency.addEventListener('click', function() {
+                if (confirm('This will call 911. Are you sure this is an emergency?')) {
+                    alert('Calling 911... Please stay on the line.');
+                    // In a real application, this would initiate a phone call
+                }
+            });
+            
+            // Emergency consultation button
+            const startEmergencyConsult = document.getElementById('startEmergencyConsult');
+            startEmergencyConsult.addEventListener('click', function() {
+                alert('Connecting you with an emergency doctor...');
+                // In a real application, this would start a video consultation
+            });
+            
+            // Symptoms checker
+            const checkSymptoms = document.getElementById('checkSymptoms');
+            const symptomResult = document.getElementById('symptomResult');
+            
+            checkSymptoms.addEventListener('click', function() {
+                // Show the result (in a real app, this would analyze selected symptoms)
+                symptomResult.classList.remove('hidden');
+                symptomResult.classList.add('fade-in');
+                
+                // Scroll to result
+                symptomResult.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Session button functionality
+            const sessionBtn = document.getElementById('sessionBtn');
+            sessionBtn.addEventListener('click', function() {
+                alert('Starting video session with your doctor...');
+                // In a real application, this would connect to the video consultation service
+            });
+        });
+    </script>
+</body>
+</html>

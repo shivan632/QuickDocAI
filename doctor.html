@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Doctors - HealthConnect</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+        
+        .dark {
+            --bg-primary: #1e293b;
+            --bg-secondary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
+        }
+        
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-active {
+            color: #3b82f6;
+            border-bottom: 2px solid #3b82f6;
+        }
+        
+        .status-online {
+            background-color: #10b981;
+        }
+        
+        .status-offline {
+            background-color: #ef4444;
+        }
+        
+        .status-busy {
+            background-color: #f59e0b;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .chat-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .user-bubble {
+            background-color: #3b82f6;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .ai-bubble {
+            background-color: #e2e8f0;
+            color: #1e293b;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .dark .ai-bubble {
+            background-color: #475569;
+            color: #e2e8f0;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translate(0, 0px); }
+            50% { transform: translate(0, -10px); }
+            100% { transform: translate(0, -0px); }
+        }
+        
+        .pulse-slow {
+            animation: pulse-slow 2s infinite;
+        }
+        
+        @keyframes pulse-slow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .symptom-item {
+            background-color: #e0f2fe;
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin: 5px;
+            display: inline-block;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .dark .symptom-item {
+            background-color: #334155;
+            color: #e2e8f0;
+        }
+        
+        .symptom-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ai-diagnosis-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-diagnosis-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+        }
+        
+        .doctor-card {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .doctor-card:hover {
+            transform: rotateY(5deg) rotateX(2deg);
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-stethoscope text-blue-500 text-2xl mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800 dark:text-white">HealthConnect</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="userprofile.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Home</a>
+                    <a href="#" class="text-blue-500 font-medium nav-active">Find Doctors</a>
+                    <a href="Appointment.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">My Appointments</a>
+                    <a href="emergency.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Emergency</a>
+                    <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">About</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 theme-toggle">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notificationBtn" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 relative">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div id="notificationDropdown" class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 hidden border border-gray-200 dark:border-gray-700">
+                            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="font-bold text-gray-800 dark:text-white">Notifications</h3>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-video text-blue-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Video session with Dr. Sarah Johnson</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Starts in 15 minutes</p>
+                                            <p class="text-xs text-blue-500 mt-1">Join Now</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-calendar-check text-green-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Appointment confirmed</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">With Dr. Michael Chen on May 25</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-pills text-yellow-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Medicine reminder</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Take Metformin after breakfast</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-user-md text-purple-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">New doctor available</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Dr. Emily Davis is now online</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 text-center border-t border-gray-200 dark:border-gray-700">
+                                <a href="#" class="text-sm text-blue-500 font-medium">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="sessionBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center pulse-slow">
+                        <i class="fas fa-video mr-2"></i> Start Session
+                    </button>
+                    <div class="relative">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=3b82f6&color=fff" alt="User" class="w-10 h-10 rounded-full cursor-pointer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">Find the Right Doctor for You</h1>
+            <p class="text-gray-600 dark:text-gray-400">Choose between our AI Doctor for immediate assistance or browse our network of healthcare professionals</p>
+        </div>
+        
+        <!-- Tabs for AI Doctor and Manual Doctor -->
+        <div class="flex space-x-4 mb-8">
+            <button id="aiDoctorTab" class="px-6 py-3 bg-blue-500 text-white rounded-lg font-medium tab-active">AI Doctor</button>
+            <button id="manualDoctorTab" class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg font-medium">Find Doctors Manually</button>
+        </div>
+        
+        <!-- AI Doctor Section -->
+        <div id="aiDoctorSection" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- AI Chat Interface -->
+                <div class="lg:col-span-2">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mr-4 floating">
+                            <i class="fas fa-robot text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">HealthConnect AI Doctor</h2>
+                            <p class="text-gray-600 dark:text-gray-400">Describe your symptoms for preliminary assessment</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 h-96 overflow-y-auto mb-4">
+                        <div class="chat-bubble ai-bubble">
+                            <p>Hello! I'm your HealthConnect AI Doctor. I'm here to help you understand your symptoms and provide preliminary guidance.</p>
+                            <p class="mt-2">Please describe what you're experiencing in detail. The more information you provide, the better I can assist you.</p>
+                        </div>
+                        
+                        <div class="chat-bubble user-bubble">
+                            <p>I've had a headache and fever since yesterday.</p>
+                        </div>
+                        
+                        <div class="chat-bubble ai-bubble">
+                            <p>I understand. Let me ask a few questions to provide better guidance:</p>
+                            <p class="mt-2">1. How severe is your headache on a scale of 1-10?</p>
+                            <p>2. What is your current temperature?</p>
+                            <p>3. Do you have any other symptoms like cough, body aches, or nausea?</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex">
+                        <input type="text" placeholder="Describe your symptoms..." class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg font-medium">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                        <p><i class="fas fa-exclamation-circle mr-1"></i> Remember: This AI provides general health information only and cannot diagnose conditions. Always consult a doctor for medical advice.</p>
+                    </div>
+                </div>
+                
+                <!-- AI Diagnosis Panel -->
+                <div class="lg:col-span-1">
+                    <div class="ai-diagnosis-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-stethoscope text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Preliminary Assessment</h3>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="font-medium mb-2">Reported Symptoms:</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-white bg-opacity-20 rounded-full px-3 py-1 text-sm">Headache</span>
+                                <span class="bg-white bg-opacity-20 rounded-full px-3 py-1 text-sm">Fever</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="font-medium mb-2">Possible Conditions:</h4>
+                            <ul class="list-disc list-inside text-sm space-y-1">
+                                <li>Common cold or flu</li>
+                                <li>Viral infection</li>
+                                <li>Migraine</li>
+                                <li>Sinusitis</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="font-medium mb-2">Recommended Actions:</h4>
+                            <ul class="list-disc list-inside text-sm space-y-1">
+                                <li>Rest and stay hydrated</li>
+                                <li>Monitor temperature regularly</li>
+                                <li>Consider over-the-counter pain relief</li>
+                                <li>Consult a doctor if symptoms persist for more than 48 hours</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <button class="w-full bg-white text-blue-600 hover:bg-blue-50 py-2 rounded-lg font-medium">
+                                <i class="fas fa-user-md mr-2"></i> Connect with a Doctor
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 bg-white dark:bg-gray-700 rounded-lg p-4">
+                        <h4 class="font-medium text-gray-800 dark:text-white mb-2">When to Seek Immediate Care:</h4>
+                        <ul class="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <li>Severe headache with vision changes</li>
+                            <li>Fever above 103°F (39.4°C)</li>
+                            <li>Stiff neck or confusion</li>
+                            <li>Difficulty breathing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Manual Doctor Finding Section -->
+        <div id="manualDoctorSection" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hidden">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Find Healthcare Professionals</h2>
+                <p class="text-gray-600 dark:text-gray-400">Browse our network of certified doctors and specialists</p>
+            </div>
+            
+            <!-- Search and Filter Section -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
+                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flex-1">
+                        <input type="text" placeholder="Search for doctors, specialties, or symptoms..." class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center pulse-slow">
+                        <i class="fas fa-search mr-2"></i> Search
+                    </button>
+                </div>
+                
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="symptom-item">Headache</span>
+                    <span class="symptom-item">Fever</span>
+                    <span class="symptom-item">Stomach Pain</span>
+                    <span class="symptom-item">Cough</span>
+                    <span class="symptom-item">Skin Rash</span>
+                </div>
+                
+                <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <select class="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>All Specialties</option>
+                        <option>Cardiology</option>
+                        <option>Dermatology</option>
+                        <option>Pediatrics</option>
+                        <option>Neurology</option>
+                    </select>
+                    
+                    <select class="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>All Locations</option>
+                        <option>Near Me</option>
+                        <option>New York</option>
+                        <option>Los Angeles</option>
+                        <option>Chicago</option>
+                    </select>
+                    
+                    <select class="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Any Availability</option>
+                        <option>Available Now</option>
+                        <option>Today</option>
+                        <option>This Week</option>
+                    </select>
+                    
+                    <select class="px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Any Rating</option>
+                        <option>4.5+ Stars</option>
+                        <option>4.0+ Stars</option>
+                        <option>3.5+ Stars</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Doctors List -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Doctor Card 1 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 card-hover doctor-card">
+                    <div class="flex items-start">
+                        <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=10b981&color=fff" alt="Doctor" class="w-16 h-16 rounded-lg">
+                        <div class="ml-4 flex-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 dark:text-white">Dr. Sarah Johnson</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Cardiologist</p>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-400 text-sm mr-1"></i>
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">4.8 (124 reviews)</span>
+                                    </div>
+                                </div>
+                                <span class="status-online w-3 h-3 rounded-full"></span>
+                            </div>
+                            <div class="mt-3 flex justify-between">
+                                <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 2.3 km away</span>
+                                <button class="text-blue-500 text-sm font-medium">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Doctor Card 2 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 card-hover doctor-card">
+                    <div class="flex items-start">
+                        <img src="https://ui-avatars.com/api/?name=Michael+Chen&background=8b5cf6&color=fff" alt="Doctor" class="w-16 h-16 rounded-lg">
+                        <div class="ml-4 flex-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 dark:text-white">Dr. Michael Chen</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Dermatologist</p>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-400 text-sm mr-1"></i>
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">4.9 (89 reviews)</span>
+                                    </div>
+                                </div>
+                                <span class="status-online w-3 h-3 rounded-full"></span>
+                            </div>
+                            <div class="mt-3 flex justify-between">
+                                <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 5.1 km away</span>
+                                <button class="text-blue-500 text-sm font-medium">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Doctor Card 3 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 card-hover doctor-card">
+                    <div class="flex items-start">
+                        <img src="https://ui-avatars.com/api/?name=Robert+Williams&background=f59e0b&color=fff" alt="Doctor" class="w-16 h-16 rounded-lg">
+                        <div class="ml-4 flex-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 dark:text-white">Dr. Robert Williams</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">General Physician</p>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-400 text-sm mr-1"></i>
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">4.7 (203 reviews)</span>
+                                    </div>
+                                </div>
+                                <span class="status-busy w-3 h-3 rounded-full"></span>
+                            </div>
+                            <div class="mt-3 flex justify-between">
+                                <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 1.5 km away</span>
+                                <button class="text-gray-400 text-sm font-medium">Busy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Doctor Card 4 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 card-hover doctor-card">
+                    <div class="flex items-start">
+                        <img src="https://ui-avatars.com/api/?name=Emily+Davis&background=ef4444&color=fff" alt="Doctor" class="w-16 h-16 rounded-lg">
+                        <div class="ml-4 flex-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 dark:text-white">Dr. Emily Davis</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Pediatrician</p>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-400 text-sm mr-1"></i>
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">4.9 (156 reviews)</span>
+                                    </div>
+                                </div>
+                                <span class="status-offline w-3 h-3 rounded-full"></span>
+                            </div>
+                            <div class="mt-3 flex justify-between">
+                                <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 3.7 km away</span>
+                                <button class="text-gray-400 text-sm font-medium">Offline</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Doctor Card 5 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 card-hover doctor-card">
+                    <div class="flex items-start">
+                        <img src="https://ui-avatars.com/api/?name=Lisa+Brown&background=3b82f6&color=fff" alt="Doctor" class="w-16 h-16 rounded-lg">
+                        <div class="ml-4 flex-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 dark:text-white">Dr. Lisa Brown</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Neurologist</p>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-400 text-sm mr-1"></i>
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">4.6 (98 reviews)</span>
+                                    </div>
+                                </div>
+                                <span class="status-online w-3 h-3 rounded-full"></span>
+                            </div>
+                            <div class="mt-3 flex justify-between">
+                                <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 4.2 km away</span>
+                                <button class="text-blue-500 text-sm font-medium">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Doctor Card 6 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 card-hover doctor-card">
+                    <div class="flex items-start">
+                        <img src="https://ui-avatars.com/api/?name=David+Wilson&background=10b981&color=fff" alt="Doctor" class="w-16 h-16 rounded-lg">
+                        <div class="ml-4 flex-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 dark:text-white">Dr. David Wilson</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Orthopedic Surgeon</p>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star text-yellow-400 text-sm mr-1"></i>
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">4.8 (142 reviews)</span>
+                                    </div>
+                                </div>
+                                <span class="status-online w-3 h-3 rounded-full"></span>
+                            </div>
+                            <div class="mt-3 flex justify-between">
+                                <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 6.5 km away</span>
+                                <button class="text-blue-500 text-sm font-medium">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="mt-8 text-center">
+                <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium">
+                    Load More Doctors
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">HealthConnect</h3>
+                    <p class="text-gray-400">Your trusted health partner for online consultations and medical guidance.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Find a Doctor</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Symptoms Checker</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Medicine Reminder</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Health Articles</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Download App</h3>
+                    <div class="flex space-x-2">
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center card-hover">
+                            <i class="fab fa-apple mr-2"></i> App Store
+                        </button>
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center card-hover">
+                            <i class="fab fa-google-play mr-2"></i> Play Store
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 HealthConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const body = document.body;
+            
+            // Check for saved theme preference or default to light
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            body.className = currentTheme;
+            updateThemeIcon(currentTheme);
+            
+            themeToggle.addEventListener('click', function() {
+                if (body.classList.contains('light')) {
+                    body.classList.replace('light', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    updateThemeIcon('dark');
+                } else {
+                    body.classList.replace('dark', 'light');
+                    localStorage.setItem('theme', 'light');
+                    updateThemeIcon('light');
+                }
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                }
+            }
+            
+            // Notification dropdown functionality
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            notificationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                notificationDropdown.classList.add('hidden');
+            });
+            
+            // Tab functionality
+            const aiDoctorTab = document.getElementById('aiDoctorTab');
+            const manualDoctorTab = document.getElementById('manualDoctorTab');
+            const aiDoctorSection = document.getElementById('aiDoctorSection');
+            const manualDoctorSection = document.getElementById('manualDoctorSection');
+            
+            aiDoctorTab.addEventListener('click', function() {
+                aiDoctorTab.classList.add('tab-active');
+                manualDoctorTab.classList.remove('tab-active');
+                aiDoctorSection.classList.remove('hidden');
+                manualDoctorSection.classList.add('hidden');
+            });
+            
+            manualDoctorTab.addEventListener('click', function() {
+                manualDoctorTab.classList.add('tab-active');
+                aiDoctorTab.classList.remove('tab-active');
+                manualDoctorSection.classList.remove('hidden');
+                aiDoctorSection.classList.add('hidden');
+            });
+            
+            // Session button functionality
+            const sessionBtn = document.getElementById('sessionBtn');
+            sessionBtn.addEventListener('click', function() {
+                alert('Starting video session with your doctor...');
+                // In a real application, this would connect to the video consultation service
+            });
+        });
+    </script>
+</body>
+</html>

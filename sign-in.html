@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthConnect - Sign In / Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+        
+        .dark {
+            --bg-primary: #1e293b;
+            --bg-secondary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
+        }
+        
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-active {
+            color: #3b82f6;
+            border-bottom: 2px solid #3b82f6;
+        }
+        
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .form-control-custom {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .form-control-custom:focus {
+            background-color: var(--bg-primary);
+            border-color: var(--primary);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+        }
+        
+        .btn-primary-custom {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary-custom:hover {
+            background-color: #2563eb;
+            border-color: #2563eb;
+        }
+        
+        .toggle-active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .toggle-inactive {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%), url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+        
+        .input-with-icon {
+            padding-left: 40px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #9ca3af;
+        }
+        
+        .step-indicator {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .step-active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .step-inactive {
+            background-color: #e5e7eb;
+            color: #6b7280;
+        }
+        
+        .dark .step-inactive {
+            background-color: #4b5563;
+            color: #d1d5db;
+        }
+        
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background-color: #e5e7eb;
+        }
+        
+        .dark .step-line {
+            background-color: #4b5563;
+        }
+        
+        .step-line.active {
+            background-color: var(--primary);
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-stethoscope text-blue-500 text-2xl mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800 dark:text-white">HealthConnect</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Home</a>
+                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Find Doctors</a>
+                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">AI Assistant</a>
+                    <a href="appointments.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">My Appointments</a>
+                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Emergency</a>
+                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">About</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    
+                    <a href="index.html" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl w-full space-y-8">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Welcome to HealthConnect</h1>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">Join thousands of patients and doctors in our healthcare community</p>
+            </div>
+            
+            <!-- User Type Selection -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white">Select Your Account Type</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Choose how you want to use HealthConnect</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Patient Card -->
+                    <div id="patientCard" class="border-2 border-blue-500 rounded-xl p-6 text-center cursor-pointer card-hover bg-blue-50 dark:bg-blue-900/20">
+                        <div class="w-16 h-16 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user-injured text-blue-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Patient</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Find doctors, book appointments, and manage your health</p>
+                        <ul class="text-left text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span>Book appointments with specialists</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span>Access your medical records</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span>Get medicine reminders</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span>24/7 AI health assistant</span>
+                            </li>
+                        </ul>
+                        <button id="selectPatient" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium">
+                            Continue as Patient
+                        </button>
+                    </div>
+                    
+                    <!-- Doctor Card -->
+                    <div id="doctorCard" class="border-2 border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center cursor-pointer card-hover">
+                        <div class="w-16 h-16 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user-md text-green-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Doctor</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Manage your practice, connect with patients, and grow your reputation</p>
+                        <ul class="text-left text-sm text-gray-600 dark:text-gray-400 space-y-2 mb-6">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span>Manage your appointment schedule</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span>Access patient medical history</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span>E-prescriptions and medical notes</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-2"></i>
+                                <span>Build your professional profile</span>
+                            </li>
+                        </ul>
+                        <button id="selectDoctor" class="w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-2 rounded-lg font-medium">
+                            Continue as Doctor
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sign In / Sign Up Forms -->
+            <div id="authForms" class="hidden">
+                <!-- Toggle between Sign In and Sign Up -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+                    <div class="flex rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
+                        <button id="signInToggle" class="flex-1 py-3 font-medium toggle-active">Sign In</button>
+                        <button id="signUpToggle" class="flex-1 py-3 font-medium toggle-inactive">Create Account</button>
+                    </div>
+                </div>
+                
+                <!-- Sign In Form -->
+                <div id="signInForm" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center" id="signInTitle">Sign In to Your Account</h2>
+                    
+                    <form id="patientSignInForm" class="space-y-4">
+                        <div class="relative">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="patientSignInEmail" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Email Address" required>
+                        </div>
+                        
+                        <div class="relative">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="patientSignInPassword" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Password" required>
+                            <i class="fas fa-eye password-toggle" id="togglePatientSignInPassword"></i>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="rememberPatient" class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded">
+                                <label for="rememberPatient" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Remember me</label>
+                            </div>
+                            <a href="#" class="text-sm text-blue-500 hover:text-blue-700">Forgot your password?</a>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium">
+                            Sign In
+                        </button>
+                        
+                        <div class="text-center mt-4">
+                            <p class="text-gray-600 dark:text-gray-400">Don't have an account? <a href="#" class="text-blue-500 hover:text-blue-700 font-medium" id="switchToSignUp">Sign up</a></p>
+                        </div>
+                    </form>
+                    
+                    <form id="doctorSignInForm" class="space-y-4 hidden">
+                        <div class="relative">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="doctorSignInEmail" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Professional Email" required>
+                        </div>
+                        
+                        <div class="relative">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="doctorSignInPassword" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Password" required>
+                            <i class="fas fa-eye password-toggle" id="toggleDoctorSignInPassword"></i>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="rememberDoctor" class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded">
+                                <label for="rememberDoctor" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Remember me</label>
+                            </div>
+                            <a href="#" class="text-sm text-blue-500 hover:text-blue-700">Forgot your password?</a>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium">
+                            Sign In
+                        </button>
+                        
+                        <div class="text-center mt-4">
+                            <p class="text-gray-600 dark:text-gray-400">Don't have an account? <a href="#" class="text-blue-500 hover:text-blue-700 font-medium" id="switchToDoctorSignUp">Apply for Doctor Account</a></p>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Sign Up Form -->
+                <div id="signUpForm" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center" id="signUpTitle">Create Your Account</h2>
+                    
+                    <!-- Patient Sign Up Form -->
+                    <form id="patientSignUpForm" class="space-y-4">
+                        <!-- Step 1: Basic Information -->
+                        <div id="patientStep1">
+                            <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-4">Personal Information</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <input type="text" id="patientFirstName" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="First Name" required>
+                                </div>
+                                
+                                <div class="relative">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <input type="text" id="patientLastName" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Last Name" required>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input type="email" id="patientEmail" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Email Address" required>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <i class="fas fa-phone input-icon"></i>
+                                    <input type="tel" id="patientPhone" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Phone Number" required>
+                                </div>
+                                
+                                <div class="relative">
+                                    <i class="fas fa-birthday-cake input-icon"></i>
+                                    <input type="date" id="patientDob" class="w-full form-control-custom rounded-lg py-3 input-with-icon" required>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end mt-6">
+                                <button type="button" id="patientNext1" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Account Security -->
+                        <div id="patientStep2" class="hidden">
+                            <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-4">Account Security</h3>
+                            
+                            <div class="relative">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="patientPassword" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Create Password" required>
+                                <i class="fas fa-eye password-toggle" id="togglePatientPassword"></i>
+                            </div>
+                            
+                            <div class="relative">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="patientConfirmPassword" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Confirm Password" required>
+                                <i class="fas fa-eye password-toggle" id="togglePatientConfirmPassword"></i>
+                            </div>
+                            
+                            <div class="flex items-center mt-2">
+                                <input type="checkbox" id="patientTerms" class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded" required>
+                                <label for="patientTerms" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                                    I agree to the <a href="#" class="text-blue-500 hover:text-blue-700">Terms of Service</a> and <a href="#" class="text-blue-500 hover:text-blue-700">Privacy Policy</a>
+                                </label>
+                            </div>
+                            
+                            <div class="flex justify-between mt-6">
+                                <button type="button" id="patientBack1" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-6 py-2 rounded-lg font-medium">
+                                    Back
+                                </button>
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+                                    Create Account
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Doctor Sign Up Form -->
+                    <form id="doctorSignUpForm" class="space-y-4 hidden">
+                        <!-- Step Indicators -->
+                        <div class="flex items-center mb-6">
+                            <div class="step-indicator step-active">1</div>
+                            <div class="step-line"></div>
+                            <div class="step-indicator step-inactive">2</div>
+                            <div class="step-line"></div>
+                            <div class="step-indicator step-inactive">3</div>
+                        </div>
+                        
+                        <!-- Step 1: Professional Information -->
+                        <div id="doctorStep1">
+                            <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-4">Professional Information</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <input type="text" id="doctorFirstName" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="First Name" required>
+                                </div>
+                                
+                                <div class="relative">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <input type="text" id="doctorLastName" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Last Name" required>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input type="email" id="doctorEmail" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Professional Email" required>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <i class="fas fa-stethoscope input-icon"></i>
+                                    <select id="doctorSpecialty" class="w-full form-control-custom rounded-lg py-3 input-with-icon" required>
+                                        <option value="">Select Specialty</option>
+                                        <option value="cardiology">Cardiology</option>
+                                        <option value="dermatology">Dermatology</option>
+                                        <option value="pediatrics">Pediatrics</option>
+                                        <option value="neurology">Neurology</option>
+                                        <option value="orthopedics">Orthopedics</option>
+                                        <option value="psychiatry">Psychiatry</option>
+                                        <option value="general">General Practice</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="relative">
+                                    <i class="fas fa-id-card input-icon"></i>
+                                    <input type="text" id="doctorLicense" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Medical License Number" required>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end mt-6">
+                                <button type="button" id="doctorNext1" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Professional Details -->
+                        <div id="doctorStep2" class="hidden">
+                            <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-4">Professional Details</h3>
+                            
+                            <div class="relative">
+                                <i class="fas fa-graduation-cap input-icon"></i>
+                                <input type="text" id="doctorEducation" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Medical School / University" required>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <i class="fas fa-briefcase input-icon"></i>
+                                    <input type="number" id="doctorExperience" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Years of Experience" required>
+                                </div>
+                                
+                                <div class="relative">
+                                    <i class="fas fa-map-marker-alt input-icon"></i>
+                                    <input type="text" id="doctorLocation" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="City, State" required>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <i class="fas fa-hospital input-icon"></i>
+                                <input type="text" id="doctorHospital" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Hospital / Clinic Name" required>
+                            </div>
+                            
+                            <div class="flex justify-between mt-6">
+                                <button type="button" id="doctorBack1" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-6 py-2 rounded-lg font-medium">
+                                    Back
+                                </button>
+                                <button type="button" id="doctorNext2" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3: Account Setup -->
+                        <div id="doctorStep3" class="hidden">
+                            <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-4">Account Setup</h3>
+                            
+                            <div class="relative">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="doctorPassword" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Create Password" required>
+                                <i class="fas fa-eye password-toggle" id="toggleDoctorPassword"></i>
+                            </div>
+                            
+                            <div class="relative">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="doctorConfirmPassword" class="w-full form-control-custom rounded-lg py-3 input-with-icon" placeholder="Confirm Password" required>
+                                <i class="fas fa-eye password-toggle" id="toggleDoctorConfirmPassword"></i>
+                            </div>
+                            
+                            <div class="flex items-center mt-2">
+                                <input type="checkbox" id="doctorTerms" class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded" required>
+                                <label for="doctorTerms" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                                    I agree to the <a href="#" class="text-blue-500 hover:text-blue-700">Terms of Service</a> and <a href="#" class="text-blue-500 hover:text-blue-700">Privacy Policy</a>
+                                </label>
+                            </div>
+                            
+                            <div class="flex justify-between mt-6">
+                                <button type="button" id="doctorBack2" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-6 py-2 rounded-lg font-medium">
+                                    Back
+                                </button>
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium">
+                                    Submit Application
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p class="text-gray-600 dark:text-gray-400">Already have an account? <a href="#" class="text-blue-500 hover:text-blue-700 font-medium" id="switchToSignIn">Sign in</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">HealthConnect</h3>
+                    <p class="text-gray-400">Your trusted health partner for online consultations and medical guidance.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Find a Doctor</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Symptoms Checker</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Medicine Reminder</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Health Articles</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Download App</h3>
+                    <div class="flex space-x-2">
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center">
+                            <i class="fab fa-apple mr-2"></i> App Store
+                        </button>
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center">
+                            <i class="fab fa-google-play mr-2"></i> Play Store
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 HealthConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Theme functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.body;
+        
+        // Check for saved theme preference or default to light
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        body.className = currentTheme;
+        updateThemeIcon(currentTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            if (body.classList.contains('light')) {
+                body.classList.replace('light', 'dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeIcon('dark');
+            } else {
+                body.classList.replace('dark', 'light');
+                localStorage.setItem('theme', 'light');
+                updateThemeIcon('light');
+            }
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
+        
+        // User Type Selection
+        const patientCard = document.getElementById('patientCard');
+        const doctorCard = document.getElementById('doctorCard');
+        const selectPatient = document.getElementById('selectPatient');
+        const selectDoctor = document.getElementById('selectDoctor');
+        const authForms = document.getElementById('authForms');
+        
+        let selectedUserType = 'patient'; // Default selection
+        
+        // Select Patient
+        patientCard.addEventListener('click', function() {
+            selectedUserType = 'patient';
+            patientCard.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+            patientCard.classList.remove('border-gray-300', 'dark:border-gray-600');
+            doctorCard.classList.add('border-gray-300', 'dark:border-gray-600');
+            doctorCard.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+            selectPatient.classList.add('bg-blue-500', 'hover:bg-blue-600', 'text-white');
+            selectPatient.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white');
+            selectDoctor.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white');
+            selectDoctor.classList.remove('bg-green-500', 'hover:bg-green-600', 'text-white');
+            
+            updateFormTitles();
+        });
+        
+        selectPatient.addEventListener('click', function() {
+            authForms.classList.remove('hidden');
+            window.scrollTo({ top: authForms.offsetTop - 100, behavior: 'smooth' });
+        });
+        
+        // Select Doctor
+        doctorCard.addEventListener('click', function() {
+            selectedUserType = 'doctor';
+            doctorCard.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+            doctorCard.classList.remove('border-gray-300', 'dark:border-gray-600');
+            patientCard.classList.add('border-gray-300', 'dark:border-gray-600');
+            patientCard.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+            selectDoctor.classList.add('bg-green-500', 'hover:bg-green-600', 'text-white');
+            selectDoctor.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white');
+            selectPatient.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-white');
+            selectPatient.classList.remove('bg-blue-500', 'hover:bg-blue-600', 'text-white');
+            
+            updateFormTitles();
+        });
+        
+        selectDoctor.addEventListener('click', function() {
+            authForms.classList.remove('hidden');
+            window.scrollTo({ top: authForms.offsetTop - 100, behavior: 'smooth' });
+        });
+        
+        // Update form titles based on user type
+        function updateFormTitles() {
+            const signInTitle = document.getElementById('signInTitle');
+            const signUpTitle = document.getElementById('signUpTitle');
+            
+            if (selectedUserType === 'patient') {
+                signInTitle.textContent = 'Sign In to Your Patient Account';
+                signUpTitle.textContent = 'Create Your Patient Account';
+            } else {
+                signInTitle.textContent = 'Sign In to Your Doctor Account';
+                signUpTitle.textContent = 'Apply for Doctor Account';
+            }
+            
+            // Show/hide appropriate forms
+            if (document.getElementById('signInForm').classList.contains('hidden') === false) {
+                toggleSignInForms();
+            }
+            
+            if (document.getElementById('signUpForm').classList.contains('hidden') === false) {
+                toggleSignUpForms();
+            }
+        }
+        
+        // Toggle between Sign In and Sign Up
+        const signInToggle = document.getElementById('signInToggle');
+        const signUpToggle = document.getElementById('signUpToggle');
+        const signInForm = document.getElementById('signInForm');
+        const signUpForm = document.getElementById('signUpForm');
+        
+        signInToggle.addEventListener('click', function() {
+            signInForm.classList.remove('hidden');
+            signUpForm.classList.add('hidden');
+            signInToggle.classList.remove('toggle-inactive');
+            signInToggle.classList.add('toggle-active');
+            signUpToggle.classList.remove('toggle-active');
+            signUpToggle.classList.add('toggle-inactive');
+            toggleSignInForms();
+        });
+        
+        signUpToggle.addEventListener('click', function() {
+            signInForm.classList.add('hidden');
+            signUpForm.classList.remove('hidden');
+            signUpToggle.classList.remove('toggle-inactive');
+            signUpToggle.classList.add('toggle-active');
+            signInToggle.classList.remove('toggle-active');
+            signInToggle.classList.add('toggle-inactive');
+            toggleSignUpForms();
+        });
+        
+        // Switch between Sign In and Sign Up from links
+        document.getElementById('switchToSignUp').addEventListener('click', function(e) {
+            e.preventDefault();
+            signUpToggle.click();
+        });
+        
+        document.getElementById('switchToDoctorSignUp').addEventListener('click', function(e) {
+            e.preventDefault();
+            signUpToggle.click();
+        });
+        
+        document.getElementById('switchToSignIn').addEventListener('click', function(e) {
+            e.preventDefault();
+            signInToggle.click();
+        });
+        
+        // Toggle between patient and doctor sign in forms
+        function toggleSignInForms() {
+            const patientSignInForm = document.getElementById('patientSignInForm');
+            const doctorSignInForm = document.getElementById('doctorSignInForm');
+            
+            if (selectedUserType === 'patient') {
+                patientSignInForm.classList.remove('hidden');
+                doctorSignInForm.classList.add('hidden');
+            } else {
+                patientSignInForm.classList.add('hidden');
+                doctorSignInForm.classList.remove('hidden');
+            }
+        }
+        
+        // Toggle between patient and doctor sign up forms
+        function toggleSignUpForms() {
+            const patientSignUpForm = document.getElementById('patientSignUpForm');
+            const doctorSignUpForm = document.getElementById('doctorSignUpForm');
+            
+            if (selectedUserType === 'patient') {
+                patientSignUpForm.classList.remove('hidden');
+                doctorSignUpForm.classList.add('hidden');
+            } else {
+                patientSignUpForm.classList.add('hidden');
+                doctorSignUpForm.classList.remove('hidden');
+            }
+        }
+        
+        // Password visibility toggle
+        function setupPasswordToggle(passwordId, toggleId) {
+            const passwordInput = document.getElementById(passwordId);
+            const toggleIcon = document.getElementById(toggleId);
+            
+            if (passwordInput && toggleIcon) {
+                toggleIcon.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+                    }
+                });
+            }
+        }
+        
+        // Set up all password toggles
+        setupPasswordToggle('patientSignInPassword', 'togglePatientSignInPassword');
+        setupPasswordToggle('doctorSignInPassword', 'toggleDoctorSignInPassword');
+        setupPasswordToggle('patientPassword', 'togglePatientPassword');
+        setupPasswordToggle('patientConfirmPassword', 'togglePatientConfirmPassword');
+        setupPasswordToggle('doctorPassword', 'toggleDoctorPassword');
+        setupPasswordToggle('doctorConfirmPassword', 'toggleDoctorConfirmPassword');
+        
+        // Patient Sign Up Form Steps
+        const patientNext1 = document.getElementById('patientNext1');
+        const patientBack1 = document.getElementById('patientBack1');
+        const patientStep1 = document.getElementById('patientStep1');
+        const patientStep2 = document.getElementById('patientStep2');
+        
+        patientNext1.addEventListener('click', function() {
+            // Basic validation for step 1
+            const firstName = document.getElementById('patientFirstName').value;
+            const lastName = document.getElementById('patientLastName').value;
+            const email = document.getElementById('patientEmail').value;
+            const phone = document.getElementById('patientPhone').value;
+            const dob = document.getElementById('patientDob').value;
+            
+            if (firstName && lastName && email && phone && dob) {
+                patientStep1.classList.add('hidden');
+                patientStep2.classList.remove('hidden');
+            } else {
+                alert('Please fill in all fields before proceeding.');
+            }
+        });
+        
+        patientBack1.addEventListener('click', function() {
+            patientStep2.classList.add('hidden');
+            patientStep1.classList.remove('hidden');
+        });
+        
+        // Doctor Sign Up Form Steps
+        const doctorNext1 = document.getElementById('doctorNext1');
+        const doctorNext2 = document.getElementById('doctorNext2');
+        const doctorBack1 = document.getElementById('doctorBack1');
+        const doctorBack2 = document.getElementById('doctorBack2');
+        const doctorStep1 = document.getElementById('doctorStep1');
+        const doctorStep2 = document.getElementById('doctorStep2');
+        const doctorStep3 = document.getElementById('doctorStep3');
+        
+        doctorNext1.addEventListener('click', function() {
+            // Basic validation for step 1
+            const firstName = document.getElementById('doctorFirstName').value;
+            const lastName = document.getElementById('doctorLastName').value;
+            const email = document.getElementById('doctorEmail').value;
+            const specialty = document.getElementById('doctorSpecialty').value;
+            const license = document.getElementById('doctorLicense').value;
+            
+            if (firstName && lastName && email && specialty && license) {
+                doctorStep1.classList.add('hidden');
+                doctorStep2.classList.remove('hidden');
+                
+                // Update step indicators
+                document.querySelectorAll('.step-line')[0].classList.add('active');
+                document.querySelectorAll('.step-indicator')[1].classList.remove('step-inactive');
+                document.querySelectorAll('.step-indicator')[1].classList.add('step-active');
+            } else {
+                alert('Please fill in all fields before proceeding.');
+            }
+        });
+        
+        doctorNext2.addEventListener('click', function() {
+            // Basic validation for step 2
+            const education = document.getElementById('doctorEducation').value;
+            const experience = document.getElementById('doctorExperience').value;
+            const location = document.getElementById('doctorLocation').value;
+            const hospital = document.getElementById('doctorHospital').value;
+            
+            if (education && experience && location && hospital) {
+                doctorStep2.classList.add('hidden');
+                doctorStep3.classList.remove('hidden');
+                
+                // Update step indicators
+                document.querySelectorAll('.step-line')[1].classList.add('active');
+                document.querySelectorAll('.step-indicator')[2].classList.remove('step-inactive');
+                document.querySelectorAll('.step-indicator')[2].classList.add('step-active');
+            } else {
+                alert('Please fill in all fields before proceeding.');
+            }
+        });
+        
+        doctorBack1.addEventListener('click', function() {
+            doctorStep2.classList.add('hidden');
+            doctorStep1.classList.remove('hidden');
+            
+            // Update step indicators
+            document.querySelectorAll('.step-line')[0].classList.remove('active');
+            document.querySelectorAll('.step-indicator')[1].classList.remove('step-active');
+            document.querySelectorAll('.step-indicator')[1].classList.add('step-inactive');
+        });
+        
+        doctorBack2.addEventListener('click', function() {
+            doctorStep3.classList.add('hidden');
+            doctorStep2.classList.remove('hidden');
+            
+            // Update step indicators
+            document.querySelectorAll('.step-line')[1].classList.remove('active');
+            document.querySelectorAll('.step-indicator')[2].classList.remove('step-active');
+            document.querySelectorAll('.step-indicator')[2].classList.add('step-inactive');
+        });
+        
+        // Form Submission with Redirects
+        document.getElementById('patientSignInForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Validate form
+            const email = document.getElementById('patientSignInEmail').value;
+            const password = document.getElementById('patientSignInPassword').value;
+            
+            if (email && password) {
+                // Simulate successful login
+                alert('Patient login successful! Redirecting to your profile...');
+                // Redirect to user profile page
+                window.location.href = 'userprofile.html';
+            } else {
+                alert('Please fill in all required fields.');
+            }
+        });
+        
+        document.getElementById('doctorSignInForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Validate form
+            const email = document.getElementById('doctorSignInEmail').value;
+            const password = document.getElementById('doctorSignInPassword').value;
+            
+            if (email && password) {
+                // Simulate successful login
+                alert('Doctor login successful! Redirecting to your dashboard...');
+                // Redirect to doctor dashboard page
+                window.location.href = 'doctor.html';
+            } else {
+                alert('Please fill in all required fields.');
+            }
+        });
+        
+        document.getElementById('patientSignUpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Validate form
+            const firstName = document.getElementById('patientFirstName').value;
+            const lastName = document.getElementById('patientLastName').value;
+            const email = document.getElementById('patientEmail').value;
+            const phone = document.getElementById('patientPhone').value;
+            const dob = document.getElementById('patientDob').value;
+            const password = document.getElementById('patientPassword').value;
+            const confirmPassword = document.getElementById('patientConfirmPassword').value;
+            const terms = document.getElementById('patientTerms').checked;
+            
+            if (!firstName || !lastName || !email || !phone || !dob || !password || !confirmPassword) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match. Please try again.');
+                return;
+            }
+            
+            if (!terms) {
+                alert('Please agree to the Terms of Service and Privacy Policy.');
+                return;
+            }
+            
+            // Simulate successful account creation
+            alert('Patient account created successfully! Redirecting to your profile...');
+            // Redirect to user profile page
+            window.location.href = 'userprofile.html';
+        });
+        
+        document.getElementById('doctorSignUpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Validate form
+            const firstName = document.getElementById('doctorFirstName').value;
+            const lastName = document.getElementById('doctorLastName').value;
+            const email = document.getElementById('doctorEmail').value;
+            const specialty = document.getElementById('doctorSpecialty').value;
+            const license = document.getElementById('doctorLicense').value;
+            const education = document.getElementById('doctorEducation').value;
+            const experience = document.getElementById('doctorExperience').value;
+            const location = document.getElementById('doctorLocation').value;
+            const hospital = document.getElementById('doctorHospital').value;
+            const password = document.getElementById('doctorPassword').value;
+            const confirmPassword = document.getElementById('doctorConfirmPassword').value;
+            const terms = document.getElementById('doctorTerms').checked;
+            
+            // Check if all required fields are filled
+            if (!firstName || !lastName || !email || !specialty || !license || 
+                !education || !experience || !location || !hospital || !password || !confirmPassword) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match. Please try again.');
+                return;
+            }
+            
+            if (!terms) {
+                alert('Please agree to the Terms of Service and Privacy Policy.');
+                return;
+            }
+            
+            // Simulate successful application submission
+            alert('Doctor application submitted successfully! Redirecting to your dashboard...');
+            // Redirect to doctor dashboard page
+            window.location.href = 'doctor.html';
+        });
+    });
+</script>
+</body>
+</html>

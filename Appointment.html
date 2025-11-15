@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments - HealthConnect</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+        
+        .dark {
+            --bg-primary: #1e293b;
+            --bg-secondary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
+        }
+        
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-active {
+            color: #3b82f6;
+            border-bottom: 2px solid #3b82f6;
+        }
+        
+        .status-online {
+            background-color: #10b981;
+        }
+        
+        .status-offline {
+            background-color: #ef4444;
+        }
+        
+        .status-busy {
+            background-color: #f59e0b;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .appointment-card {
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .appointment-upcoming {
+            border-left-color: #10b981;
+        }
+        
+        .appointment-completed {
+            border-left-color: #6b7280;
+        }
+        
+        .appointment-cancelled {
+            border-left-color: #ef4444;
+        }
+        
+        .badge-upcoming {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge-completed {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        
+        .badge-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .dark .badge-upcoming {
+            background-color: #064e3b;
+            color: #a7f3d0;
+        }
+        
+        .dark .badge-completed {
+            background-color: #374151;
+            color: #d1d5db;
+        }
+        
+        .dark .badge-cancelled {
+            background-color: #7f1d1d;
+            color: #fecaca;
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-stethoscope text-blue-500 text-2xl mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800 dark:text-white">HealthConnect</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="userprofile.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Home</a>
+                    <a href="doctor.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Find Doctors</a>
+                    <a href="#" class="text-blue-500 font-medium nav-active">My Appointments</a>
+                    <a href="emergency.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Emergency</a>
+                    <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">About</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notificationBtn" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 relative">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div id="notificationDropdown" class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 hidden border border-gray-200 dark:border-gray-700">
+                            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="font-bold text-gray-800 dark:text-white">Notifications</h3>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-video text-blue-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Video session with Dr. Sarah Johnson</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Starts in 15 minutes</p>
+                                            <p class="text-xs text-blue-500 mt-1">Join Now</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-calendar-check text-green-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Appointment confirmed</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">With Dr. Michael Chen on May 25</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-pills text-yellow-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Medicine reminder</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Take Metformin after breakfast</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-user-md text-purple-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">New doctor available</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Dr. Emily Davis is now online</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 text-center border-t border-gray-200 dark:border-gray-700">
+                                <a href="#" class="text-sm text-blue-500 font-medium">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="sessionBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center">
+                        <i class="fas fa-video mr-2"></i> Start Session
+                    </button>
+                    <div class="relative">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=3b82f6&color=fff" alt="User" class="w-10 h-10 rounded-full cursor-pointer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">My Appointments</h1>
+            <p class="text-gray-600 dark:text-gray-400">Manage your upcoming, completed, and cancelled appointments</p>
+        </div>
+
+        <!-- Appointments Filter -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white">Appointment History</h2>
+                    <p class="text-gray-600 dark:text-gray-400">You have 8 appointments in total</p>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    <button class="px-4 py-2 bg-blue-500 text-white rounded-lg font-medium">All Appointments</button>
+                    <button class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium">Upcoming</button>
+                    <button class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium">Completed</button>
+                    <button class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium">Cancelled</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments List -->
+        <div class="space-y-6">
+            <!-- Upcoming Appointments Section -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Upcoming Appointments</h2>
+                
+                <!-- Appointment 1 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-4 appointment-card appointment-upcoming card-hover">
+                    <div class="flex flex-col lg:flex-row justify-between">
+                        <div class="flex-1 mb-4 lg:mb-0">
+                            <div class="flex items-start mb-4">
+                                <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=10b981&color=fff" alt="Doctor" class="w-16 h-16 rounded-full mr-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Dr. Sarah Johnson</h3>
+                                    <p class="text-gray-600 dark:text-gray-400">Cardiologist • City General Hospital</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="status-online w-2 h-2 rounded-full mr-2"></span>
+                                        <span class="text-green-600 dark:text-green-400 text-sm">Available Now</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Appointment Details</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex">
+                                            <i class="fas fa-calendar-alt text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">Today, May 24, 2023</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">3:00 PM - 3:30 PM</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex">
+                                            <i class="fas fa-video text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">Video Consultation</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">Online Session</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Session Instructions</h4>
+                                    <ul class="text-sm text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
+                                        <li>Join 5 minutes before scheduled time</li>
+                                        <li>Have your recent lab reports ready</li>
+                                        <li>Ensure stable internet connection</li>
+                                        <li>Prepare questions about your medication</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col justify-between lg:items-end space-y-4">
+                            <span class="badge-upcoming px-3 py-1 rounded-full text-sm font-medium self-start">Upcoming</span>
+                            
+                            <div class="flex space-x-2">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center">
+                                    <i class="fas fa-video mr-2"></i> Join Session
+                                </button>
+                                <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-4 py-2 rounded-lg font-medium">
+                                    Reschedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Appointment 2 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-4 appointment-card appointment-upcoming card-hover">
+                    <div class="flex flex-col lg:flex-row justify-between">
+                        <div class="flex-1 mb-4 lg:mb-0">
+                            <div class="flex items-start mb-4">
+                                <img src="https://ui-avatars.com/api/?name=Michael+Chen&background=8b5cf6&color=fff" alt="Doctor" class="w-16 h-16 rounded-full mr-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Dr. Michael Chen</h3>
+                                    <p class="text-gray-600 dark:text-gray-400">Dermatologist • Community Medical Center</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="status-online w-2 h-2 rounded-full mr-2"></span>
+                                        <span class="text-green-600 dark:text-green-400 text-sm">Available Now</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Appointment Details</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex">
+                                            <i class="fas fa-calendar-alt text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">Tomorrow, May 25, 2023</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">10:30 AM - 11:00 AM</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex">
+                                            <i class="fas fa-clinic-medical text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">In-Person Visit</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">Community Medical Center</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Session Instructions</h4>
+                                    <ul class="text-sm text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
+                                        <li>Arrive 15 minutes before your appointment</li>
+                                        <li>Bring your health insurance card</li>
+                                        <li>Wear loose clothing for skin examination</li>
+                                        <li>Note down any new symptoms since last visit</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col justify-between lg:items-end space-y-4">
+                            <span class="badge-upcoming px-3 py-1 rounded-full text-sm font-medium self-start">Upcoming</span>
+                            
+                            <div class="flex space-x-2">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center">
+                                    <i class="fas fa-directions mr-2"></i> Get Directions
+                                </button>
+                                <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-4 py-2 rounded-lg font-medium">
+                                    Reschedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Completed Appointments Section -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Completed Appointments</h2>
+                
+                <!-- Appointment 3 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-4 appointment-card appointment-completed card-hover">
+                    <div class="flex flex-col lg:flex-row justify-between">
+                        <div class="flex-1 mb-4 lg:mb-0">
+                            <div class="flex items-start mb-4">
+                                <img src="https://ui-avatars.com/api/?name=Robert+Williams&background=3b82f6&color=fff" alt="Doctor" class="w-16 h-16 rounded-full mr-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Dr. Robert Williams</h3>
+                                    <p class="text-gray-600 dark:text-gray-400">General Physician • City General Hospital</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="status-online w-2 h-2 rounded-full mr-2"></span>
+                                        <span class="text-green-600 dark:text-green-400 text-sm">Available Now</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Appointment Details</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex">
+                                            <i class="fas fa-calendar-alt text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">May 15, 2023</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">2:00 PM - 2:30 PM</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex">
+                                            <i class="fas fa-video text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">Video Consultation</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">Online Session</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Follow-up Instructions</h4>
+                                    <ul class="text-sm text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
+                                        <li>Continue taking prescribed medication</li>
+                                        <li>Schedule blood test in 2 weeks</li>
+                                        <li>Follow up if symptoms worsen</li>
+                                        <li>Maintain low-sodium diet as discussed</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col justify-between lg:items-end space-y-4">
+                            <span class="badge-completed px-3 py-1 rounded-full text-sm font-medium self-start">Completed</span>
+                            
+                            <div class="flex space-x-2">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center">
+                                    <i class="fas fa-file-medical mr-2"></i> View Summary
+                                </button>
+                                <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-4 py-2 rounded-lg font-medium">
+                                    Book Again
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Appointment 4 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-4 appointment-card appointment-completed card-hover">
+                    <div class="flex flex-col lg:flex-row justify-between">
+                        <div class="flex-1 mb-4 lg:mb-0">
+                            <div class="flex items-start mb-4">
+                                <img src="https://ui-avatars.com/api/?name=Emily+Davis&background=ef4444&color=fff" alt="Doctor" class="w-16 h-16 rounded-full mr-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Dr. Emily Davis</h3>
+                                    <p class="text-gray-600 dark:text-gray-400">Pediatrician • Community Medical Center</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="status-busy w-2 h-2 rounded-full mr-2"></span>
+                                        <span class="text-yellow-600 dark:text-yellow-400 text-sm">Busy</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Appointment Details</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex">
+                                            <i class="fas fa-calendar-alt text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">April 28, 2023</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">11:00 AM - 11:45 AM</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex">
+                                            <i class="fas fa-clinic-medical text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">In-Person Visit</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">Community Medical Center</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Follow-up Instructions</h4>
+                                    <ul class="text-sm text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
+                                        <li>Continue vaccination schedule as planned</li>
+                                        <li>Monitor temperature twice daily</li>
+                                        <li>Follow up in 3 months for next checkup</li>
+                                        <li>Call immediately if fever exceeds 101°F</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col justify-between lg:items-end space-y-4">
+                            <span class="badge-completed px-3 py-1 rounded-full text-sm font-medium self-start">Completed</span>
+                            
+                            <div class="flex space-x-2">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center">
+                                    <i class="fas fa-file-medical mr-2"></i> View Summary
+                                </button>
+                                <button class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-4 py-2 rounded-lg font-medium">
+                                    Book Again
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cancelled Appointments Section -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Cancelled Appointments</h2>
+                
+                <!-- Appointment 5 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 appointment-card appointment-cancelled card-hover">
+                    <div class="flex flex-col lg:flex-row justify-between">
+                        <div class="flex-1 mb-4 lg:mb-0">
+                            <div class="flex items-start mb-4">
+                                <img src="https://ui-avatars.com/api/?name=Lisa+Brown&background=6b7280&color=fff" alt="Doctor" class="w-16 h-16 rounded-full mr-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Dr. Lisa Brown</h3>
+                                    <p class="text-gray-600 dark:text-gray-400">Neurologist • Community Medical Center</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="status-offline w-2 h-2 rounded-full mr-2"></span>
+                                        <span class="text-red-600 dark:text-red-400 text-sm">Offline</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Appointment Details</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex">
+                                            <i class="fas fa-calendar-alt text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">May 10, 2023</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">4:00 PM - 4:45 PM</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex">
+                                            <i class="fas fa-video text-blue-500 mt-1 mr-2"></i>
+                                            <div>
+                                                <p class="text-gray-800 dark:text-white font-medium">Video Consultation</p>
+                                                <p class="text-gray-600 dark:text-gray-400 text-sm">Online Session</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">Cancellation Reason</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Doctor unavailable due to emergency. We apologize for the inconvenience.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col justify-between lg:items-end space-y-4">
+                            <span class="badge-cancelled px-3 py-1 rounded-full text-sm font-medium self-start">Cancelled</span>
+                            
+                            <div class="flex space-x-2">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium">
+                                    Reschedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">HealthConnect</h3>
+                    <p class="text-gray-400">Your trusted health partner for online consultations and medical guidance.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Find a Doctor</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Symptoms Checker</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Medicine Reminder</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Health Articles</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Download App</h3>
+                    <div class="flex space-x-2">
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center">
+                            <i class="fab fa-apple mr-2"></i> App Store
+                        </button>
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center">
+                            <i class="fab fa-google-play mr-2"></i> Play Store
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 HealthConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const body = document.body;
+            
+            // Check for saved theme preference or default to light
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            body.className = currentTheme;
+            updateThemeIcon(currentTheme);
+            
+            themeToggle.addEventListener('click', function() {
+                if (body.classList.contains('light')) {
+                    body.classList.replace('light', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    updateThemeIcon('dark');
+                } else {
+                    body.classList.replace('dark', 'light');
+                    localStorage.setItem('theme', 'light');
+                    updateThemeIcon('light');
+                }
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                }
+            }
+            
+            // Notification dropdown functionality
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            notificationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                notificationDropdown.classList.add('hidden');
+            });
+            
+            // Session button functionality
+            const sessionBtn = document.getElementById('sessionBtn');
+            
+            sessionBtn.addEventListener('click', function() {
+                alert('Starting video session with your doctor...');
+                // In a real application, this would connect to the video consultation service
+            });
+        });
+    </script>
+</body>
+</html>

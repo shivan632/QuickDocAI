@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthConnect - Your Health Partner</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+        
+        .dark {
+            --bg-primary: #1e293b;
+            --bg-secondary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
+        }
+        
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .symptom-item {
+            background-color: #e0f2fe;
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin: 5px;
+            display: inline-block;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .dark .symptom-item {
+            background-color: #334155;
+            color: #e2e8f0;
+        }
+        
+        .symptom-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-active {
+            color: #3b82f6;
+            border-bottom: 2px solid #3b82f6;
+        }
+        
+        .status-online {
+            background-color: #10b981;
+        }
+        
+        .status-offline {
+            background-color: #ef4444;
+        }
+        
+        .status-busy {
+            background-color: #f59e0b;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .emergency-alert {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%), url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translate(0, 0px); }
+            50% { transform: translate(0, -15px); }
+            100% { transform: translate(0, -0px); }
+        }
+        
+        .doctor-card {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .doctor-card:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+        
+        .ai-option {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .ai-option:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+        }
+        
+        .doctor-option {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .doctor-option:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        .search-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        
+        .search-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+        
+        .search-container:hover::before {
+            animation: shine 1.5s;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid #3b82f6;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #3b82f6; }
+        }
+        
+        .pulse-slow {
+            animation: pulse-slow 2s infinite;
+        }
+        
+        @keyframes pulse-slow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .rotate-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .rotate-3d:hover {
+            transform: rotateY(15deg);
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <i class="fas fa-stethoscope text-blue-500 text-2xl mr-2 floating"></i>
+                    <span class="text-xl font-bold text-gray-800 dark:text-white">HealthConnect</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" class="text-blue-500 font-medium nav-active">Home</a>
+                    <a href="doctor.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Find Doctors</a>
+                    <a href="Appointment.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">My Appointments</a>
+                    <a href="emergency.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Emergency</a>
+                    <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">About</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 theme-toggle">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <button id="notificationBtn" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 relative">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div id="notificationDropdown" class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 hidden border border-gray-200 dark:border-gray-700">
+                            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="font-bold text-gray-800 dark:text-white">Notifications</h3>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-video text-blue-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Video session with Dr. Sarah Johnson</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Starts in 15 minutes</p>
+                                            <p class="text-xs text-blue-500 mt-1">Join Now</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-calendar-check text-green-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Appointment confirmed</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">With Dr. Michael Chen on May 25</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-pills text-yellow-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">Medicine reminder</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Take Metformin after breakfast</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-user-md text-purple-500"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-800 dark:text-white">New doctor available</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Dr. Emily Davis is now online</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 text-center border-t border-gray-200 dark:border-gray-700">
+                                <a href="#" class="text-sm text-blue-500 font-medium">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="sessionBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center pulse-slow">
+                        <i class="fas fa-video mr-2"></i> Start Session
+                    </button>
+                    <div class="relative">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=3b82f6&color=fff" alt="User" class="w-10 h-10 rounded-full cursor-pointer rotate-3d">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl fade-in">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 typewriter">Your Health is Our Priority</h1>
+                <p class="text-xl mb-8">Connect with trusted healthcare professionals from the comfort of your home</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button class="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-bold text-lg flex items-center justify-center card-hover">
+                        <i class="fas fa-search mr-2"></i> Find a Doctor
+                    </button>
+                    <button class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 px-6 py-3 rounded-lg font-bold text-lg flex items-center justify-center card-hover">
+                        <i class="fas fa-calendar-plus mr-2"></i> Book Appointment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - User Profile -->
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 card-hover">
+                    <div class="flex flex-col items-center">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=3b82f6&color=fff&size=128" alt="User" class="w-24 h-24 rounded-full mb-4 floating">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white">John Doe</h2>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">Premium Member</p>
+                        <div class="flex space-x-2 mb-6">
+                            <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-3 py-1 rounded-full">Diabetes</span>
+                            <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs px-3 py-1 rounded-full">Hypertension</span>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                        <h3 class="font-medium text-gray-700 dark:text-gray-300 mb-2">Personal Information</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Age:</span>
+                                <span class="font-medium dark:text-white">42</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Gender:</span>
+                                <span class="font-medium dark:text-white">Male</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Blood Group:</span>
+                                <span class="font-medium dark:text-white">O+</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Last Checkup:</span>
+                                <span class="font-medium dark:text-white">15 May 2023</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Upcoming Appointments -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 card-hover">
+                    <h3 class="font-bold text-gray-800 dark:text-white mb-4">Upcoming Appointments</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg doctor-card">
+                            <div class="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-md text-blue-500"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-medium text-gray-800 dark:text-white">Dr. Sarah Johnson</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Cardiologist</p>
+                                <p class="text-xs text-blue-500">Today, 3:00 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg doctor-card">
+                            <div class="flex-shrink-0 w-12 h-12 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-md text-green-500"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-medium text-gray-800 dark:text-white">Dr. Michael Chen</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Dermatologist</p>
+                                <p class="text-xs text-green-500">Tomorrow, 10:30 AM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Medicine Reminder -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover">
+                    <h3 class="font-bold text-gray-800 dark:text-white mb-4">Medicine Schedule</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg doctor-card">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 dark:bg-purple-800 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-pills text-purple-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Metformin</h4>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">500mg</p>
+                                </div>
+                            </div>
+                            <span class="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 text-xs px-2 py-1 rounded">8:00 AM</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg doctor-card">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-pills text-blue-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Lisinopril</h4>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">10mg</p>
+                                </div>
+                            </div>
+                            <span class="bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 text-xs px-2 py-1 rounded">7:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Middle Column - Main Content -->
+            <div class="lg:col-span-2">
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 text-center card-hover">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mx-auto mb-3 floating">
+                            <i class="fas fa-user-md text-blue-500 text-xl"></i>
+                        </div>
+                        <h3 class="font-medium text-gray-800 dark:text-white">Find Doctors</h3>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 text-center card-hover">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mx-auto mb-3 floating">
+                            <i class="fas fa-robot text-green-500 text-xl"></i>
+                        </div>
+                        <h3 class="font-medium text-gray-800 dark:text-white">AI Assistant</h3>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 text-center card-hover">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center mx-auto mb-3 floating">
+                            <i class="fas fa-calendar-check text-purple-500 text-xl"></i>
+                        </div>
+                        <h3 class="font-medium text-gray-800 dark:text-white">Appointments</h3>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 text-center card-hover emergency-alert">
+                        <div class="w-12 h-12 bg-red-100 dark:bg-red-800 rounded-full flex items-center justify-center mx-auto mb-3 floating">
+                            <i class="fas fa-ambulance text-red-500 text-xl"></i>
+                        </div>
+                        <h3 class="font-medium text-gray-800 dark:text-white">Emergency</h3>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Search Section with AI Option -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 card-hover">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Find the Right Doctor</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">Choose how you'd like to find healthcare assistance</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- AI Assistant Option -->
+                        <div class="ai-option cursor-pointer" id="aiOption">
+                            <div class="flex items-center mb-3">
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3 floating">
+                                    <i class="fas fa-robot text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">Talk with AI Assistant</h3>
+                            </div>
+                            <p class="mb-4">Get immediate guidance and preliminary assessment from our AI health assistant</p>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-clock mr-2"></i>
+                                <span>Available 24/7</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Doctor Selection Option -->
+                        <div class="doctor-option cursor-pointer" id="doctorOption">
+                            <div class="flex items-center mb-3">
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3 floating">
+                                    <i class="fas fa-user-md text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">Choose a Doctor</h3>
+                            </div>
+                            <p class="mb-4">Select from our network of certified healthcare professionals</p>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-star mr-2"></i>
+                                <span>Verified & Rated Doctors</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Input (Shown when doctor option is selected) -->
+                    <div id="searchContainer" class="search-container bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hidden fade-in">
+                        <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+                            <div class="flex-1">
+                                <input type="text" placeholder="Search for doctors, specialties, or symptoms..." class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center pulse-slow">
+                                <i class="fas fa-search mr-2"></i> Search
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="symptom-item">Headache</span>
+                            <span class="symptom-item">Fever</span>
+                            <span class="symptom-item">Stomach Pain</span>
+                            <span class="symptom-item">Cough</span>
+                            <span class="symptom-item">Skin Rash</span>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Chat Interface (Shown when AI option is selected) -->
+                    <div id="aiChatContainer" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hidden fade-in">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mr-3 floating">
+                                <i class="fas fa-robot text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 dark:text-white">HealthConnect AI Assistant</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Ask me about your symptoms</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 h-40 overflow-y-auto mb-4">
+                            <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                                <i class="fas fa-comment-dots text-2xl mb-2"></i>
+                                <p>Start a conversation with our AI assistant</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <input type="text" placeholder="Describe your symptoms..." class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg font-medium">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nearby Hospitals Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 card-hover">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-white">Nearby Hospitals</h2>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 rounded-lg text-sm font-medium">All</button>
+                            <button class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-lg text-sm font-medium">With Available Doctors</button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- Hospital 1 -->
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 card-hover">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="font-bold text-lg text-gray-800 dark:text-white">City General Hospital</h3>
+                                    <p class="text-gray-600 dark:text-gray-400">123 Healthcare Ave, Downtown</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-map-marker-alt text-gray-400 mr-1"></i>
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">1.2 km away</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-2">Available Doctors:</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex items-center">
+                                            <span class="status-online w-2 h-2 rounded-full mr-2"></span>
+                                            <span class="text-gray-800 dark:text-white">Dr. Robert Williams - General Physician</span>
+                                        </div>
+                                        <span class="text-green-600 dark:text-green-400 text-sm">Available Now</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex items-center">
+                                            <span class="status-busy w-2 h-2 rounded-full mr-2"></span>
+                                            <span class="text-gray-800 dark:text-white">Dr. Emily Davis - Pediatrician</span>
+                                        </div>
+                                        <span class="text-yellow-600 dark:text-yellow-400 text-sm">Busy</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">Emergency: </span>
+                                    <span class="text-green-600 dark:text-green-400 font-medium">Open 24/7</span>
+                                </div>
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium pulse-slow">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Hospital 2 -->
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 card-hover">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="font-bold text-lg text-gray-800 dark:text-white">Community Medical Center</h3>
+                                    <p class="text-gray-600 dark:text-gray-400">456 Wellness St, Midtown</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-map-marker-alt text-gray-400 mr-1"></i>
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">3.5 km away</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-2">Available Doctors:</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex items-center">
+                                            <span class="status-online w-2 h-2 rounded-full mr-2"></span>
+                                            <span class="text-gray-800 dark:text-white">Dr. Sarah Johnson - Cardiologist</span>
+                                        </div>
+                                        <span class="text-green-600 dark:text-green-400 text-sm">Available Now</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex items-center">
+                                            <span class="status-online w-2 h-2 rounded-full mr-2"></span>
+                                            <span class="text-gray-800 dark:text-white">Dr. Michael Chen - Dermatologist</span>
+                                        </div>
+                                        <span class="text-green-600 dark:text-green-400 text-sm">Available Now</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex items-center">
+                                            <span class="status-offline w-2 h-2 rounded-full mr-2"></span>
+                                            <span class="text-gray-800 dark:text-white">Dr. Lisa Brown - Neurologist</span>
+                                        </div>
+                                        <span class="text-red-600 dark:text-red-400 text-sm">Offline</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">Emergency: </span>
+                                    <span class="text-green-600 dark:text-green-400 font-medium">Open 24/7</span>
+                                </div>
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium pulse-slow">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Health Tips Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 card-hover">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Health Tips & Articles</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 card-hover">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mr-3 floating">
+                                    <i class="fas fa-heartbeat text-blue-500"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-800 dark:text-white">Managing Blood Pressure</h3>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Learn about lifestyle changes that can help maintain healthy blood pressure levels.</p>
+                            <a href="#" class="text-blue-500 text-sm font-medium mt-2 inline-block">Read More</a>
+                        </div>
+                        
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 card-hover">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mr-3 floating">
+                                    <i class="fas fa-apple-alt text-green-500"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-800 dark:text-white">Nutrition for Diabetics</h3>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Discover the best foods to manage blood sugar levels effectively.</p>
+                            <a href="#" class="text-blue-500 text-sm font-medium mt-2 inline-block">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">HealthConnect</h3>
+                    <p class="text-gray-400">Your trusted health partner for online consultations and medical guidance.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Find a Doctor</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Symptoms Checker</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Medicine Reminder</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Health Articles</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Download App</h3>
+                    <div class="flex space-x-2">
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center card-hover">
+                            <i class="fab fa-apple mr-2"></i> App Store
+                        </button>
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center card-hover">
+                            <i class="fab fa-google-play mr-2"></i> Play Store
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 HealthConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const body = document.body;
+            
+            // Check for saved theme preference or default to light
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            body.className = currentTheme;
+            updateThemeIcon(currentTheme);
+            
+            themeToggle.addEventListener('click', function() {
+                if (body.classList.contains('light')) {
+                    body.classList.replace('light', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    updateThemeIcon('dark');
+                } else {
+                    body.classList.replace('dark', 'light');
+                    localStorage.setItem('theme', 'light');
+                    updateThemeIcon('light');
+                }
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                }
+            }
+            
+            // Notification dropdown functionality
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            notificationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                notificationDropdown.classList.add('hidden');
+            });
+            
+            // AI and Doctor option functionality
+            const aiOption = document.getElementById('aiOption');
+            const doctorOption = document.getElementById('doctorOption');
+            const searchContainer = document.getElementById('searchContainer');
+            const aiChatContainer = document.getElementById('aiChatContainer');
+            
+            aiOption.addEventListener('click', function() {
+                // Reset styles
+                aiOption.classList.add('glow');
+                doctorOption.classList.remove('glow');
+                
+                // Show AI chat and hide search
+                aiChatContainer.classList.remove('hidden');
+                searchContainer.classList.add('hidden');
+                
+                // Add fade-in animation
+                aiChatContainer.classList.add('fade-in');
+            });
+            
+            doctorOption.addEventListener('click', function() {
+                // Reset styles
+                doctorOption.classList.add('glow');
+                aiOption.classList.remove('glow');
+                
+                // Show search and hide AI chat
+                searchContainer.classList.remove('hidden');
+                aiChatContainer.classList.add('hidden');
+                
+                // Add fade-in animation
+                searchContainer.classList.add('fade-in');
+            });
+            
+            // Session button functionality
+            const sessionBtn = document.getElementById('sessionBtn');
+            sessionBtn.addEventListener('click', function() {
+                alert('Starting video session with your doctor...');
+                // In a real application, this would connect to the video consultation service
+            });
+        });
+    </script>
+</body>
+</html>
