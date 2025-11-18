@@ -157,6 +157,7 @@
             display: inline-block;
             font-size: 14px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
         
         .dark .symptom-item {
@@ -190,6 +191,62 @@
         .doctor-card:hover {
             transform: rotateY(5deg) rotateX(2deg);
         }
+        
+        .medicine-card {
+            transition: all 0.3s ease;
+        }
+        
+        .medicine-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .medicine-result-card {
+            transition: all 0.3s ease;
+        }
+        
+        .medicine-result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+            width: auto;
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        @keyframes slide-up {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes bounce-in {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes scale-in {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .animate-fade-in { animation: fade-in 0.3s ease-out; }
+        .animate-fade-out { animation: fade-out 0.3s ease-out; }
+        .animate-slide-up { animation: slide-up 0.4s ease-out; }
+        .animate-bounce-in { animation: bounce-in 0.6s ease-out; }
+        .animate-scale-in { animation: scale-in 0.5s ease-out; }
     </style>
 </head>
 <body class="light">
@@ -204,10 +261,10 @@
                 
                 <div class="hidden md:flex space-x-8">
                     <a href="userprofile.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Home</a>
+                    <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">About</a>
                     <a href="#" class="text-blue-500 font-medium nav-active">Find Doctors</a>
                     <a href="Appointment.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">My Appointments</a>
                     <a href="emergency.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Emergency</a>
-                    <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">About</a>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -323,7 +380,7 @@
                         </div>
                     </div>
                     
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 h-96 overflow-y-auto mb-4">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 h-96 overflow-y-auto mb-4" id="aiChatMessages">
                         <div class="chat-bubble ai-bubble">
                             <p>Hello! I'm your HealthConnect AI Doctor. I'm here to help you understand your symptoms and provide preliminary guidance.</p>
                             <p class="mt-2">Please describe what you're experiencing in detail. The more information you provide, the better I can assist you.</p>
@@ -342,8 +399,8 @@
                     </div>
                     
                     <div class="flex">
-                        <input type="text" placeholder="Describe your symptoms..." class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg font-medium">
+                        <input type="text" id="aiChatInput" placeholder="Describe your symptoms..." class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button id="aiChatSend" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg font-medium">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -422,9 +479,9 @@
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
                 <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                     <div class="flex-1">
-                        <input type="text" placeholder="Search for doctors, specialties, or symptoms..." class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="doctorSearchInput" placeholder="Search for doctors, specialties, or symptoms..." class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center pulse-slow">
+                    <button id="doctorSearchButton" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center pulse-slow">
                         <i class="fas fa-search mr-2"></i> Search
                     </button>
                 </div>
@@ -490,7 +547,7 @@
                             </div>
                             <div class="mt-3 flex justify-between">
                                 <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 2.3 km away</span>
-                                <button class="text-blue-500 text-sm font-medium">Book Now</button>
+                                <button class="text-blue-500 text-sm font-medium book-doctor" data-doctor-id="1">Book Now</button>
                             </div>
                         </div>
                     </div>
@@ -514,7 +571,7 @@
                             </div>
                             <div class="mt-3 flex justify-between">
                                 <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 5.1 km away</span>
-                                <button class="text-blue-500 text-sm font-medium">Book Now</button>
+                                <button class="text-blue-500 text-sm font-medium book-doctor" data-doctor-id="2">Book Now</button>
                             </div>
                         </div>
                     </div>
@@ -586,7 +643,7 @@
                             </div>
                             <div class="mt-3 flex justify-between">
                                 <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 4.2 km away</span>
-                                <button class="text-blue-500 text-sm font-medium">Book Now</button>
+                                <button class="text-blue-500 text-sm font-medium book-doctor" data-doctor-id="5">Book Now</button>
                             </div>
                         </div>
                     </div>
@@ -610,7 +667,7 @@
                             </div>
                             <div class="mt-3 flex justify-between">
                                 <span class="text-sm text-gray-600 dark:text-gray-400"><i class="fas fa-map-marker-alt mr-1"></i> 6.5 km away</span>
-                                <button class="text-blue-500 text-sm font-medium">Book Now</button>
+                                <button class="text-blue-500 text-sm font-medium book-doctor" data-doctor-id="6">Book Now</button>
                             </div>
                         </div>
                     </div>
@@ -746,7 +803,541 @@
                 alert('Starting video session with your doctor...');
                 // In a real application, this would connect to the video consultation service
             });
+            
+            // Initialize medicine functionality
+            initializeMedicineFunctionality();
         });
+
+        // Enhanced AI Chat functionality with medicine recommendations
+        function sendAIMessage(message) {
+            if (!message.trim()) return;
+            
+            const aiChatMessages = document.getElementById('aiChatMessages');
+            const aiChatInput = document.getElementById('aiChatInput');
+            
+            // Add user message
+            const userMessageHTML = `
+                <div class="chat-bubble user-bubble">
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            aiChatMessages.innerHTML += userMessageHTML;
+            
+            // Clear input
+            aiChatInput.value = '';
+            
+            // Show typing indicator
+            const typingIndicator = `
+                <div class="chat-bubble ai-bubble typing-indicator">
+                    <div class="flex space-x-1">
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>
+            `;
+            aiChatMessages.innerHTML += typingIndicator;
+            aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+            
+            // Simulate AI response
+            setTimeout(() => {
+                // Remove typing indicator
+                document.querySelector('.typing-indicator')?.remove();
+                
+                const aiResponse = generateAIResponse(message);
+                const aiMessageHTML = `
+                    <div class="chat-bubble ai-bubble">
+                        <p>${aiResponse.message}</p>
+                    </div>
+                `;
+                
+                aiChatMessages.innerHTML += aiMessageHTML;
+                
+                // Show medicine recommendations if applicable
+                if (aiResponse.medicines && aiResponse.medicines.length > 0) {
+                    showMedicineRecommendations(aiResponse.medicines, aiResponse.condition);
+                }
+                
+                aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+            }, 1500);
+        }
+
+        // Enhanced AI response with medicine recommendations
+        function generateAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            let response = {
+                message: "",
+                condition: "",
+                medicines: []
+            };
+            
+            // Disease and medicine database
+            const conditions = {
+                headache: {
+                    message: "Headaches can have various causes including tension, migraines, or sinus issues. For mild to moderate headaches, over-the-counter pain relievers can help. Make sure to stay hydrated and rest in a quiet, dark room.",
+                    medicines: [
+                        { name: "Ibuprofen", type: "Pain Reliever", dosage: "200-400mg every 4-6 hours", purpose: "Reduces pain and inflammation", warning: "Take with food" },
+                        { name: "Acetaminophen", type: "Pain Reliever", dosage: "500mg every 4-6 hours", purpose: "Reduces pain and fever", warning: "Do not exceed 3000mg per day" },
+                        { name: "Aspirin", type: "Pain Reliever", dosage: "325-650mg every 4 hours", purpose: "Reduces pain and inflammation", warning: "Not recommended for children" }
+                    ]
+                },
+                fever: {
+                    message: "A fever is often a sign of infection. Make sure to rest, drink plenty of fluids, and monitor your temperature. If it's above 103°F (39.4°C) or lasts more than 3 days, please see a doctor.",
+                    medicines: [
+                        { name: "Acetaminophen", type: "Fever Reducer", dosage: "500mg every 4-6 hours", purpose: "Reduces fever and pain", warning: "Do not exceed 3000mg per day" },
+                        { name: "Ibuprofen", type: "Fever Reducer", dosage: "200-400mg every 6-8 hours", purpose: "Reduces fever and inflammation", warning: "Take with food" }
+                    ]
+                },
+                cough: {
+                    message: "Coughs are common with respiratory infections. Stay hydrated, use a humidifier, and avoid irritants like smoke. If you have difficulty breathing or the cough lasts more than 3 weeks, please see a doctor.",
+                    medicines: [
+                        { name: "Dextromethorphan", type: "Cough Suppressant", dosage: "10-20mg every 4 hours", purpose: "Controls cough reflex", warning: "May cause drowsiness" },
+                        { name: "Guaifenesin", type: "Expectorant", dosage: "200-400mg every 4 hours", purpose: "Loosens mucus", warning: "Drink plenty of water" }
+                    ]
+                },
+                cold: {
+                    message: "The common cold is a viral infection that usually resolves on its own within 7-10 days. Rest, hydration, and symptom management can help you feel more comfortable.",
+                    medicines: [
+                        { name: "Phenylephrine", type: "Decongestant", dosage: "10mg every 4 hours", purpose: "Relieves nasal congestion", warning: "May increase blood pressure" },
+                        { name: "Chlorpheniramine", type: "Antihistamine", dosage: "4mg every 4-6 hours", purpose: "Reduces runny nose and sneezing", warning: "May cause drowsiness" }
+                    ]
+                },
+                allergy: {
+                    message: "Allergies can cause various symptoms including sneezing, itching, and nasal congestion. Avoiding allergens and using appropriate medications can provide relief.",
+                    medicines: [
+                        { name: "Loratadine", type: "Antihistamine", dosage: "10mg once daily", purpose: "Relieves allergy symptoms", warning: "Non-drowsy formula" },
+                        { name: "Cetirizine", type: "Antihistamine", dosage: "5-10mg once daily", purpose: "Reduces allergic reactions", warning: "May cause drowsiness in some people" }
+                    ]
+                },
+                stomach: {
+                    message: "Stomach issues can range from indigestion to more serious conditions. Avoid spicy or heavy foods and stay hydrated. If you experience severe pain, vomiting, or symptoms persist, consult a doctor.",
+                    medicines: [
+                        { name: "Antacids", type: "Acid Reducer", dosage: "As needed after meals", purpose: "Neutralizes stomach acid", warning: "Can interfere with other medications" },
+                        { name: "Loperamide", type: "Anti-diarrheal", dosage: "4mg initially, then 2mg after each loose stool", purpose: "Controls diarrhea", warning: "Do not use if fever present" }
+                    ]
+                },
+                migraine: {
+                    message: "Migraines are severe headaches often accompanied by nausea and sensitivity to light/sound. Rest in a dark, quiet room and consider medication for relief.",
+                    medicines: [
+                        { name: "Sumatriptan", type: "Migraine Relief", dosage: "25-100mg as needed", purpose: "Specific migraine treatment", warning: "Prescription required" },
+                        { name: "Naproxen", type: "Pain Reliever", dosage: "220-550mg initially, then 220mg every 8-12 hours", purpose: "Reduces pain and inflammation", warning: "Take with food" }
+                    ]
+                }
+            };
+            
+            // Check for conditions in the message
+            for (const [condition, data] of Object.entries(conditions)) {
+                if (lowerMessage.includes(condition)) {
+                    response.message = data.message;
+                    response.condition = condition;
+                    response.medicines = data.medicines;
+                    return response;
+                }
+            }
+            
+            // Check for specific symptoms
+            if (lowerMessage.includes('head') && lowerMessage.includes('pain')) {
+                response.message = conditions.headache.message;
+                response.condition = "headache";
+                response.medicines = conditions.headache.medicines;
+            } else if (lowerMessage.includes('temperature') || lowerMessage.includes('hot')) {
+                response.message = conditions.fever.message;
+                response.condition = "fever";
+                response.medicines = conditions.fever.medicines;
+            } else if (lowerMessage.includes('runny nose') || lowerMessage.includes('sneezing')) {
+                response.message = conditions.cold.message;
+                response.condition = "cold";
+                response.medicines = conditions.cold.medicines;
+            } else {
+                response.message = "I understand you're experiencing health concerns. For a proper assessment, I recommend describing your symptoms in more detail or consulting with a healthcare professional for personalized advice.";
+            }
+            
+            return response;
+        }
+
+        // Show medicine recommendations
+        function showMedicineRecommendations(medicines, condition) {
+            const aiChatMessages = document.getElementById('aiChatMessages');
+            
+            const medicineHTML = `
+                <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500 medicine-recommendations fade-in">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-pills text-blue-500 mr-2"></i>
+                        <h4 class="font-bold text-gray-800 dark:text-white">Medication Suggestions for ${condition.charAt(0).toUpperCase() + condition.slice(1)}</h4>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Based on your symptoms, here are some common over-the-counter options. Always consult a doctor before taking any medication.</p>
+                    
+                    <div class="space-y-3">
+                        ${medicines.map(medicine => `
+                            <div class="bg-white dark:bg-gray-700 rounded-lg p-3 border border-gray-200 dark:border-gray-600 medicine-card">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h5 class="font-semibold text-gray-800 dark:text-white">${medicine.name}</h5>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">${medicine.type}</p>
+                                    </div>
+                                    <span class="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 text-xs px-2 py-1 rounded">OTC</span>
+                                </div>
+                                
+                                <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                    <div>
+                                        <span class="font-medium text-gray-700 dark:text-gray-300">Dosage:</span>
+                                        <p class="text-gray-600 dark:text-gray-400">${medicine.dosage}</p>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-700 dark:text-gray-300">Purpose:</span>
+                                        <p class="text-gray-600 dark:text-gray-400">${medicine.purpose}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-2">
+                                    <span class="font-medium text-yellow-700 dark:text-yellow-300 text-sm">⚠️ ${medicine.warning}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                        <p class="text-sm text-yellow-800 dark:text-yellow-200">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            <strong>Important:</strong> These are general suggestions only. Always consult with a healthcare professional before taking any medication, especially if you have existing health conditions or are taking other medications.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            aiChatMessages.innerHTML += medicineHTML;
+            aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+        }
+
+        // Initialize medicine functionality
+        function initializeMedicineFunctionality() {
+            // Add event listener to AI chat send button
+            const aiChatSend = document.getElementById('aiChatSend');
+            const aiChatInput = document.getElementById('aiChatInput');
+            
+            aiChatSend.addEventListener('click', function() {
+                sendAIMessage(aiChatInput.value);
+            });
+            
+            aiChatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendAIMessage(aiChatInput.value);
+                }
+            });
+            
+            // Initialize medicine search
+            initializeMedicineSearch();
+            
+            // Add booking functionality to doctor cards
+            document.querySelectorAll('.book-doctor').forEach(button => {
+                button.addEventListener('click', function() {
+                    const doctorId = this.getAttribute('data-doctor-id');
+                    bookAppointment(doctorId);
+                });
+            });
+        }
+
+        // Add medicine search functionality
+        function initializeMedicineSearch() {
+            const searchInput = document.getElementById('doctorSearchInput');
+            const searchButton = document.getElementById('doctorSearchButton');
+            
+            searchButton.addEventListener('click', function() {
+                searchMedicines(searchInput.value);
+            });
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchMedicines(searchInput.value);
+                }
+            });
+            
+            // Add click handlers to symptom items
+            const symptomItems = document.querySelectorAll('.symptom-item');
+            symptomItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    searchInput.value = this.textContent;
+                    searchMedicines(this.textContent);
+                });
+            });
+        }
+
+        // Search medicines function
+        function searchMedicines(query) {
+            if (!query.trim()) return;
+            
+            // In a real app, this would be an API call
+            const results = simulateMedicineSearch(query);
+            
+            // Show medicine search results
+            showMedicineSearchResults(results, query);
+        }
+
+        // Simulate medicine search
+        function simulateMedicineSearch(query) {
+            const medicineDatabase = {
+                headache: [
+                    { name: "Ibuprofen", brand: "Advil, Motrin", type: "NSAID", form: "Tablet/Capsule", purpose: "Pain, Inflammation, Fever" },
+                    { name: "Acetaminophen", brand: "Tylenol", type: "Analgesic", form: "Tablet/Capsule", purpose: "Pain, Fever" },
+                    { name: "Aspirin", brand: "Bayer", type: "NSAID", form: "Tablet", purpose: "Pain, Inflammation, Fever" }
+                ],
+                fever: [
+                    { name: "Acetaminophen", brand: "Tylenol", type: "Analgesic", form: "Tablet/Liquid", purpose: "Fever, Pain" },
+                    { name: "Ibuprofen", brand: "Advil, Motrin", type: "NSAID", form: "Tablet/Liquid", purpose: "Fever, Pain, Inflammation" }
+                ],
+                cough: [
+                    { name: "Dextromethorphan", brand: "Robitussin, Delsym", type: "Antitussive", form: "Syrup/Liquid", purpose: "Cough Suppression" },
+                    { name: "Guaifenesin", brand: "Mucinex", type: "Expectorant", form: "Tablet/Syrup", purpose: "Mucus Relief" }
+                ],
+                cold: [
+                    { name: "Phenylephrine", brand: "Sudafed PE", type: "Decongestant", form: "Tablet/Liquid", purpose: "Nasal Congestion" },
+                    { name: "Chlorpheniramine", brand: "Chlor-Trimeton", type: "Antihistamine", form: "Tablet", purpose: "Allergy Symptoms" }
+                ],
+                allergy: [
+                    { name: "Loratadine", brand: "Claritin", type: "Antihistamine", form: "Tablet/Liquid", purpose: "Allergy Relief" },
+                    { name: "Cetirizine", brand: "Zyrtec", type: "Antihistamine", form: "Tablet/Liquid", purpose: "Allergy Relief" }
+                ]
+            };
+            
+            const lowerQuery = query.toLowerCase();
+            let results = [];
+            
+            for (const [condition, medicines] of Object.entries(medicineDatabase)) {
+                if (lowerQuery.includes(condition)) {
+                    results = medicines;
+                    break;
+                }
+            }
+            
+            // If no specific condition found, return some general results
+            if (results.length === 0) {
+                results = [
+                    { name: "Consult a Doctor", brand: "Medical Professional", type: "Professional Advice", form: "Consultation", purpose: "Accurate Diagnosis" }
+                ];
+            }
+            
+            return results;
+        }
+
+        // Show medicine search results
+        function showMedicineSearchResults(results, query) {
+            // Create modal for medicine results
+            const modalHTML = `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Medicine Search: "${query}"</h3>
+                                <button id="closeMedicineResults" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            ${results.length > 0 ? 
+                                `<div class="space-y-4">
+                                    ${results.map(medicine => `
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 medicine-result-card">
+                                            <div class="flex justify-between items-start mb-3">
+                                                <div>
+                                                    <h4 class="font-bold text-lg text-gray-800 dark:text-white">${medicine.name}</h4>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">${medicine.brand}</p>
+                                                </div>
+                                                <span class="bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-xs px-2 py-1 rounded">${medicine.type}</span>
+                                            </div>
+                                            
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                                <div>
+                                                    <span class="font-medium text-gray-700 dark:text-gray-300">Form:</span>
+                                                    <p class="text-gray-600 dark:text-gray-400">${medicine.form}</p>
+                                                </div>
+                                                <div>
+                                                    <span class="font-medium text-gray-700 dark:text-gray-300">Primary Use:</span>
+                                                    <p class="text-gray-600 dark:text-gray-400">${medicine.purpose}</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mt-4 flex justify-between items-center">
+                                                <button class="text-blue-500 text-sm font-medium view-details" data-medicine="${medicine.name}">
+                                                    View Details
+                                                </button>
+                                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium consult-doctor" data-condition="${query}">
+                                                    <i class="fas fa-user-md mr-1"></i> Consult Doctor
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>` : 
+                                `<div class="text-center py-8">
+                                    <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
+                                    <p class="text-gray-600 dark:text-gray-400">No medicine information found for "${query}"</p>
+                                    <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">Try different symptoms or consult a doctor directly</p>
+                                </div>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Add event listeners
+            document.getElementById('closeMedicineResults').addEventListener('click', function() {
+                document.querySelector('.fixed.inset-0').remove();
+            });
+            
+            // Close modal when clicking outside
+            document.querySelector('.fixed.inset-0').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.remove();
+                }
+            });
+            
+            // Add medicine detail functionality
+            document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', function() {
+                    const medicineName = this.getAttribute('data-medicine');
+                    showMedicineDetails(medicineName);
+                });
+            });
+            
+            // Add consult doctor functionality
+            document.querySelectorAll('.consult-doctor').forEach(button => {
+                button.addEventListener('click', function() {
+                    const condition = this.getAttribute('data-condition');
+                    // Switch to manual doctor tab and search for relevant specialists
+                    document.getElementById('manualDoctorTab').click();
+                    document.getElementById('doctorSearchInput').value = condition;
+                    document.querySelector('.fixed.inset-0').remove();
+                });
+            });
+        }
+
+        // Show detailed medicine information
+        function showMedicineDetails(medicineName) {
+            // In a real app, this would fetch detailed information from a database
+            const medicineDetails = {
+                "Ibuprofen": {
+                    description: "Nonsteroidal anti-inflammatory drug (NSAID) used to reduce fever and treat pain or inflammation.",
+                    uses: ["Pain relief", "Fever reduction", "Inflammation reduction"],
+                    sideEffects: ["Upset stomach", "Heartburn", "Dizziness"],
+                    interactions: ["Blood thinners", "Other NSAIDs", "Certain blood pressure medications"],
+                    precautions: ["Take with food", "Avoid alcohol", "Not recommended during late pregnancy"]
+                },
+                "Acetaminophen": {
+                    description: "Analgesic and antipyretic medication used to treat pain and fever.",
+                    uses: ["Pain relief", "Fever reduction"],
+                    sideEffects: ["Liver damage (with overdose)", "Rash", "Nausea"],
+                    interactions: ["Alcohol", "Warfarin", "Certain seizure medications"],
+                    precautions: ["Do not exceed recommended dose", "Check other medications for acetaminophen content"]
+                }
+            };
+            
+            const details = medicineDetails[medicineName] || {
+                description: "Detailed information not available. Please consult a pharmacist or healthcare provider.",
+                uses: ["Consult healthcare provider"],
+                sideEffects: ["Consult healthcare provider"],
+                interactions: ["Consult healthcare provider"],
+                precautions: ["Consult healthcare provider"]
+            };
+            
+            // Create details modal
+            const detailsHTML = `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-white">${medicineName} - Details</h3>
+                                <button id="closeMedicineDetails" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2">Description</h4>
+                                    <p class="text-gray-600 dark:text-gray-400">${details.description}</p>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2">Common Uses</h4>
+                                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400">
+                                        ${details.uses.map(use => `<li>${use}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2">Possible Side Effects</h4>
+                                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400">
+                                        ${details.sideEffects.map(effect => `<li>${effect}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2">Drug Interactions</h4>
+                                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400">
+                                        ${details.interactions.map(interaction => `<li>${interaction}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-bold text-gray-800 dark:text-white mb-2">Precautions</h4>
+                                    <ul class="list-disc list-inside text-gray-600 dark:text-gray-400">
+                                        ${details.precautions.map(precaution => `<li>${precaution}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                                <p class="text-sm text-yellow-800 dark:text-yellow-200">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                                    <strong>Disclaimer:</strong> This information is for educational purposes only. Always consult with a healthcare professional before taking any medication.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add details modal to page
+            document.body.insertAdjacentHTML('beforeend', detailsHTML);
+            
+            // Add event listener to close button
+            document.getElementById('closeMedicineDetails').addEventListener('click', function() {
+                document.querySelector('.fixed.inset-0').remove();
+            });
+            
+            // Close modal when clicking outside
+            document.querySelector('.fixed.inset-0').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.remove();
+                }
+            });
+        }
+
+        // Book appointment function
+        function bookAppointment(doctorId) {
+            const doctor = getDoctorById(doctorId);
+            if (!doctor) return;
+            
+            alert(`Booking appointment with ${doctor.name} (${doctor.specialty})`);
+            // In a real app, this would open a booking form
+        }
+
+        // Get doctor by ID
+        function getDoctorById(doctorId) {
+            const doctors = {
+                1: { name: "Dr. Sarah Johnson", specialty: "Cardiologist" },
+                2: { name: "Dr. Michael Chen", specialty: "Dermatologist" },
+                5: { name: "Dr. Lisa Brown", specialty: "Neurologist" },
+                6: { name: "Dr. David Wilson", specialty: "Orthopedic Surgeon" }
+            };
+            
+            return doctors[doctorId];
+        }
     </script>
 </body>
 </html>

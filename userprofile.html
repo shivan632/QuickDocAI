@@ -268,10 +268,10 @@
                 
                 <div class="hidden md:flex space-x-8">
                     <a href="#" class="text-blue-500 font-medium nav-active">Home</a>
+                    <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">About</a>
                     <a href="doctor.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Find Doctors</a>
                     <a href="Appointment.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">My Appointments</a>
                     <a href="emergency.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">Emergency</a>
-                    <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 font-medium">About</a>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -783,90 +783,575 @@
     </footer>
 
     <script>
-        // Theme functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
-            const body = document.body;
-            
-            // Check for saved theme preference or default to light
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            body.className = currentTheme;
-            updateThemeIcon(currentTheme);
-            
-            themeToggle.addEventListener('click', function() {
-                if (body.classList.contains('light')) {
-                    body.classList.replace('light', 'dark');
-                    localStorage.setItem('theme', 'dark');
-                    updateThemeIcon('dark');
-                } else {
-                    body.classList.replace('dark', 'light');
-                    localStorage.setItem('theme', 'light');
-                    updateThemeIcon('light');
-                }
-            });
-            
-            function updateThemeIcon(theme) {
-                if (theme === 'dark') {
-                    themeIcon.classList.replace('fa-moon', 'fa-sun');
-                } else {
-                    themeIcon.classList.replace('fa-sun', 'fa-moon');
-                }
+    // Theme functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.body;
+        
+        // Check for saved theme preference or default to light
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        body.className = currentTheme;
+        updateThemeIcon(currentTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            if (body.classList.contains('light')) {
+                body.classList.replace('light', 'dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeIcon('dark');
+            } else {
+                body.classList.replace('dark', 'light');
+                localStorage.setItem('theme', 'light');
+                updateThemeIcon('light');
             }
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
+        
+        // Notification dropdown functionality
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        
+        notificationBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            notificationDropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            notificationDropdown.classList.add('hidden');
+        });
+        
+        // AI and Doctor option functionality
+        const aiOption = document.getElementById('aiOption');
+        const doctorOption = document.getElementById('doctorOption');
+        const searchContainer = document.getElementById('searchContainer');
+        const aiChatContainer = document.getElementById('aiChatContainer');
+        
+        aiOption.addEventListener('click', function() {
+            // Reset styles
+            aiOption.classList.add('glow');
+            doctorOption.classList.remove('glow');
             
-            // Notification dropdown functionality
-            const notificationBtn = document.getElementById('notificationBtn');
-            const notificationDropdown = document.getElementById('notificationDropdown');
+            // Show AI chat and hide search
+            aiChatContainer.classList.remove('hidden');
+            searchContainer.classList.add('hidden');
             
-            notificationBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                notificationDropdown.classList.toggle('hidden');
-            });
+            // Add fade-in animation
+            aiChatContainer.classList.add('fade-in');
+        });
+        
+        doctorOption.addEventListener('click', function() {
+            // Reset styles
+            doctorOption.classList.add('glow');
+            aiOption.classList.remove('glow');
             
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function() {
-                notificationDropdown.classList.add('hidden');
-            });
+            // Show search and hide AI chat
+            searchContainer.classList.remove('hidden');
+            aiChatContainer.classList.add('hidden');
             
-            // AI and Doctor option functionality
-            const aiOption = document.getElementById('aiOption');
-            const doctorOption = document.getElementById('doctorOption');
-            const searchContainer = document.getElementById('searchContainer');
-            const aiChatContainer = document.getElementById('aiChatContainer');
-            
-            aiOption.addEventListener('click', function() {
-                // Reset styles
-                aiOption.classList.add('glow');
-                doctorOption.classList.remove('glow');
-                
-                // Show AI chat and hide search
-                aiChatContainer.classList.remove('hidden');
-                searchContainer.classList.add('hidden');
-                
-                // Add fade-in animation
-                aiChatContainer.classList.add('fade-in');
-            });
-            
-            doctorOption.addEventListener('click', function() {
-                // Reset styles
-                doctorOption.classList.add('glow');
-                aiOption.classList.remove('glow');
-                
-                // Show search and hide AI chat
-                searchContainer.classList.remove('hidden');
-                aiChatContainer.classList.add('hidden');
-                
-                // Add fade-in animation
-                searchContainer.classList.add('fade-in');
-            });
-            
-            // Session button functionality
-            const sessionBtn = document.getElementById('sessionBtn');
-            sessionBtn.addEventListener('click', function() {
-                alert('Starting video session with your doctor...');
-                // In a real application, this would connect to the video consultation service
+            // Add fade-in animation
+            searchContainer.classList.add('fade-in');
+        });
+        
+        // Session button functionality
+        const sessionBtn = document.getElementById('sessionBtn');
+        sessionBtn.addEventListener('click', function() {
+            // Show modal for session options
+            showSessionModal();
+        });
+        
+        // Symptom search functionality
+        const symptomItems = document.querySelectorAll('.symptom-item');
+        const searchInput = document.querySelector('#searchContainer input');
+        
+        symptomItems.forEach(item => {
+            item.addEventListener('click', function() {
+                searchInput.value = this.textContent;
+                searchDoctors(this.textContent);
             });
         });
+        
+        // Search functionality
+        const searchButton = document.querySelector('#searchContainer button');
+        searchButton.addEventListener('click', function() {
+            searchDoctors(searchInput.value);
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchDoctors(searchInput.value);
+            }
+        });
+        
+        // AI Chat functionality
+        const aiChatInput = document.querySelector('#aiChatContainer input');
+        const aiChatSend = document.querySelector('#aiChatContainer button');
+        const aiChatMessages = document.querySelector('#aiChatContainer .bg-white');
+        
+        aiChatSend.addEventListener('click', function() {
+            sendAIMessage(aiChatInput.value);
+        });
+        
+        aiChatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendAIMessage(aiChatInput.value);
+            }
+        });
+        
+        // Initialize dynamic content
+        initializeDynamicContent();
+    });
+
+    // Dynamic content initialization
+    function initializeDynamicContent() {
+        // Update appointment times to be relative to current date
+        updateAppointmentTimes();
+        
+        // Initialize medicine schedule with current time
+        updateMedicineSchedule();
+        
+        // Load nearby hospitals with real distance data
+        loadNearbyHospitals();
+        
+        // Initialize health tips
+        loadHealthTips();
+    }
+
+    // Search doctors function
+    function searchDoctors(query) {
+        if (!query.trim()) {
+            alert('Please enter a search term');
+            return;
+        }
+        
+        // In a real app, this would be an API call
+        // For demo purposes, we'll simulate search results
+        const results = simulateDoctorSearch(query);
+        
+        // Show search results in a modal
+        showSearchResults(results, query);
+    }
+
+    // Simulate doctor search (in a real app, this would be an API call)
+    function simulateDoctorSearch(query) {
+        const doctors = [
+            {
+                id: 1,
+                name: "Dr. Sarah Johnson",
+                specialty: "Cardiologist",
+                rating: 4.8,
+                experience: "12 years",
+                available: true,
+                nextAvailable: "Today, 3:00 PM",
+                image: "https://randomuser.me/api/portraits/women/65.jpg"
+            },
+            {
+                id: 2,
+                name: "Dr. Michael Chen",
+                specialty: "Dermatologist",
+                rating: 4.6,
+                experience: "8 years",
+                available: true,
+                nextAvailable: "Tomorrow, 10:30 AM",
+                image: "https://randomuser.me/api/portraits/men/32.jpg"
+            },
+            {
+                id: 3,
+                name: "Dr. Robert Williams",
+                specialty: "General Physician",
+                rating: 4.9,
+                experience: "15 years",
+                available: false,
+                nextAvailable: "May 28, 2:00 PM",
+                image: "https://randomuser.me/api/portraits/men/22.jpg"
+            }
+        ];
+        
+        // Filter doctors based on query (simplified for demo)
+        return doctors.filter(doctor => 
+            doctor.name.toLowerCase().includes(query.toLowerCase()) || 
+            doctor.specialty.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+
+    // Show search results in modal
+    function showSearchResults(results, query) {
+        // Create modal HTML
+        const modalHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Search Results for "${query}"</h3>
+                            <button id="closeResults" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        ${results.length > 0 ? 
+                            `<div class="space-y-4">
+                                ${results.map(doctor => `
+                                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <img src="${doctor.image}" alt="${doctor.name}" class="w-12 h-12 rounded-full mr-4">
+                                            <div>
+                                                <h4 class="font-bold text-gray-800 dark:text-white">${doctor.name}</h4>
+                                                <p class="text-gray-600 dark:text-gray-400">${doctor.specialty}</p>
+                                                <div class="flex items-center mt-1">
+                                                    <i class="fas fa-star text-yellow-500 mr-1"></i>
+                                                    <span class="text-sm text-gray-700 dark:text-gray-300">${doctor.rating}</span>
+                                                    <span class="mx-2 text-gray-400">•</span>
+                                                    <span class="text-sm text-gray-600 dark:text-gray-400">${doctor.experience}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm ${doctor.available ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}">
+                                                ${doctor.available ? 'Available Now' : 'Not Available'}
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${doctor.nextAvailable}</p>
+                                            <button class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium book-appointment" data-doctor-id="${doctor.id}">
+                                                Book Appointment
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>` : 
+                            `<div class="text-center py-8">
+                                <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-600 dark:text-gray-400">No doctors found for "${query}"</p>
+                                <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">Try different keywords or check back later</p>
+                            </div>`
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Add event listeners
+        document.getElementById('closeResults').addEventListener('click', function() {
+            document.querySelector('.fixed.inset-0').remove();
+        });
+        
+        // Close modal when clicking outside
+        document.querySelector('.fixed.inset-0').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.remove();
+            }
+        });
+        
+        // Add booking functionality
+        document.querySelectorAll('.book-appointment').forEach(button => {
+            button.addEventListener('click', function() {
+                const doctorId = this.getAttribute('data-doctor-id');
+                bookAppointment(doctorId);
+            });
+        });
+    }
+
+    // Book appointment function
+    function bookAppointment(doctorId) {
+        // In a real app, this would open a booking form
+        // For demo, we'll show a simple confirmation
+        alert(`Appointment booking initiated for doctor ID: ${doctorId}`);
+        
+        // Close the modal
+        document.querySelector('.fixed.inset-0').remove();
+    }
+
+    // AI Chat functionality
+    function sendAIMessage(message) {
+        if (!message.trim()) return;
+        
+        const aiChatMessages = document.querySelector('#aiChatContainer .bg-white');
+        
+        // Add user message
+        const userMessageHTML = `
+            <div class="flex justify-end mb-4">
+                <div class="bg-blue-500 text-white rounded-lg p-3 max-w-xs">
+                    <p>${message}</p>
+                </div>
+            </div>
+        `;
+        
+        aiChatMessages.innerHTML += userMessageHTML;
+        
+        // Clear input
+        document.querySelector('#aiChatContainer input').value = '';
+        
+        // Simulate AI response
+        setTimeout(() => {
+            const aiResponse = generateAIResponse(message);
+            const aiMessageHTML = `
+                <div class="flex justify-start mb-4">
+                    <div class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg p-3 max-w-xs">
+                        <p>${aiResponse}</p>
+                    </div>
+                </div>
+            `;
+            
+            aiChatMessages.innerHTML += aiMessageHTML;
+            aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+        }, 1000);
+    }
+
+    // Generate AI response based on user message
+    function generateAIResponse(message) {
+        const lowerMessage = message.toLowerCase();
+        
+        if (lowerMessage.includes('headache') || lowerMessage.includes('head pain')) {
+            return "Headaches can have various causes. Have you experienced any other symptoms like fever, vision changes, or dizziness? It's important to stay hydrated and rest. If the pain is severe or persistent, I recommend consulting a doctor.";
+        } else if (lowerMessage.includes('fever') || lowerMessage.includes('temperature')) {
+            return "A fever is often a sign of infection. Make sure to rest, drink plenty of fluids, and monitor your temperature. If it's above 103°F (39.4°C) or lasts more than 3 days, please see a doctor.";
+        } else if (lowerMessage.includes('stomach') || lowerMessage.includes('abdominal')) {
+            return "Stomach pain can result from various issues. Can you describe the pain (sharp, dull, cramping) and its location? Avoid spicy or heavy foods and stay hydrated. If the pain is severe or accompanied by vomiting, seek medical attention.";
+        } else if (lowerMessage.includes('cough') || lowerMessage.includes('throat')) {
+            return "Coughs are common with respiratory infections. Stay hydrated, use a humidifier, and consider over-the-counter remedies if appropriate. If you have difficulty breathing, chest pain, or the cough lasts more than 3 weeks, please see a doctor.";
+        } else if (lowerMessage.includes('rash') || lowerMessage.includes('skin')) {
+            return "Skin rashes can have many causes including allergies, infections, or irritants. Avoid scratching and keep the area clean. If the rash is widespread, painful, or accompanied by fever, I recommend seeing a dermatologist.";
+        } else {
+            return "I understand you're experiencing health concerns. For a proper assessment, I recommend describing your symptoms in more detail or consulting with a healthcare professional for personalized advice.";
+        }
+    }
+
+    // Update appointment times to be relative to current date
+    function updateAppointmentTimes() {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        // Format dates
+        const todayStr = today.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        const tomorrowStr = tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        
+        // Update appointment times in the UI
+        const appointmentElements = document.querySelectorAll('.doctor-card .text-xs');
+        if (appointmentElements.length >= 2) {
+            appointmentElements[0].textContent = `${todayStr}, 3:00 PM`;
+            appointmentElements[1].textContent = `${tomorrowStr}, 10:30 AM`;
+        }
+    }
+
+    // Update medicine schedule based on current time
+    function updateMedicineSchedule() {
+        const now = new Date();
+        const currentHour = now.getHours();
+        
+        // Update medicine status based on current time
+        const medicineTimes = document.querySelectorAll('.doctor-card .text-xs');
+        medicineTimes.forEach(timeElement => {
+            const timeText = timeElement.textContent;
+            if (timeText.includes('AM') && currentHour < 12) {
+                timeElement.classList.remove('bg-yellow-100', 'dark:bg-yellow-800', 'text-yellow-800', 'dark:text-yellow-200');
+                timeElement.classList.add('bg-green-100', 'dark:bg-green-800', 'text-green-800', 'dark:text-green-200');
+            } else if (timeText.includes('PM') && currentHour >= 12 && currentHour < 24) {
+                timeElement.classList.remove('bg-yellow-100', 'dark:bg-yellow-800', 'text-yellow-800', 'dark:text-yellow-200');
+                timeElement.classList.add('bg-green-100', 'dark:bg-green-800', 'text-green-800', 'dark:text-green-200');
+            }
+        });
+    }
+
+    // Load nearby hospitals with dynamic data
+    function loadNearbyHospitals() {
+        // In a real app, this would fetch data from an API
+        // For demo, we'll use static data but with dynamic distances
+        const hospitals = [
+            {
+                name: "City General Hospital",
+                address: "123 Healthcare Ave, Downtown",
+                distance: (Math.random() * 5 + 0.5).toFixed(1),
+                emergency: "Open 24/7",
+                doctors: [
+                    { name: "Dr. Robert Williams", specialty: "General Physician", status: "online" },
+                    { name: "Dr. Emily Davis", specialty: "Pediatrician", status: "busy" }
+                ]
+            },
+            {
+                name: "Community Medical Center",
+                address: "456 Wellness St, Midtown",
+                distance: (Math.random() * 5 + 1).toFixed(1),
+                emergency: "Open 24/7",
+                doctors: [
+                    { name: "Dr. Sarah Johnson", specialty: "Cardiologist", status: "online" },
+                    { name: "Dr. Michael Chen", specialty: "Dermatologist", status: "online" },
+                    { name: "Dr. Lisa Brown", specialty: "Neurologist", status: "offline" }
+                ]
+            }
+        ];
+        
+        // Update hospital distances in the UI
+        const hospitalElements = document.querySelectorAll('.border.border-gray-200');
+        hospitalElements.forEach((hospitalElement, index) => {
+            if (index < hospitals.length) {
+                const distanceElement = hospitalElement.querySelector('.text-sm');
+                if (distanceElement) {
+                    distanceElement.textContent = `${hospitals[index].distance} km away`;
+                }
+            }
+        });
+    }
+
+    // Load health tips
+    function loadHealthTips() {
+        // In a real app, this would fetch from an API
+        // For demo, we'll use static data
+        const tips = [
+            {
+                title: "Managing Blood Pressure",
+                description: "Learn about lifestyle changes that can help maintain healthy blood pressure levels.",
+                icon: "fas fa-heartbeat",
+                color: "blue"
+            },
+            {
+                title: "Nutrition for Diabetics",
+                description: "Discover the best foods to manage blood sugar levels effectively.",
+                icon: "fas fa-apple-alt",
+                color: "green"
+            }
+        ];
+        
+        // Update health tips in the UI
+        const tipElements = document.querySelectorAll('.border.border-gray-200');
+        tipElements.forEach((tipElement, index) => {
+            if (index < tips.length) {
+                const tip = tips[index];
+                const iconElement = tipElement.querySelector('.w-10.h-10');
+                const titleElement = tipElement.querySelector('.font-medium');
+                const descriptionElement = tipElement.querySelector('.text-sm');
+                
+                if (iconElement) {
+                    iconElement.className = `w-10 h-10 bg-${tip.color}-100 dark:bg-${tip.color}-800 rounded-full flex items-center justify-center mr-3 floating`;
+                    iconElement.innerHTML = `<i class="${tip.icon} text-${tip.color}-500"></i>`;
+                }
+                
+                if (titleElement) {
+                    titleElement.textContent = tip.title;
+                }
+                
+                if (descriptionElement) {
+                    descriptionElement.textContent = tip.description;
+                }
+            }
+        });
+    }
+
+    // Show session modal
+    function showSessionModal() {
+        const modalHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Start a Session</h3>
+                            <button id="closeSessionModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 session-option" data-type="video">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mr-4">
+                                        <i class="fas fa-video text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 dark:text-white">Video Consultation</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Connect with your doctor via video call</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 session-option" data-type="audio">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mr-4">
+                                        <i class="fas fa-phone-alt text-green-500"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 dark:text-white">Audio Call</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Speak with your doctor over the phone</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 session-option" data-type="chat">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-800 rounded-full flex items-center justify-center mr-4">
+                                        <i class="fas fa-comments text-purple-500"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800 dark:text-white">Text Chat</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Message your doctor for quick questions</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Add event listeners
+        document.getElementById('closeSessionModal').addEventListener('click', function() {
+            document.querySelector('.fixed.inset-0').remove();
+        });
+        
+        // Close modal when clicking outside
+        document.querySelector('.fixed.inset-0').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.remove();
+            }
+        });
+        
+        // Add session option selection
+        document.querySelectorAll('.session-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const sessionType = this.getAttribute('data-type');
+                startSession(sessionType);
+            });
+        });
+    }
+
+    // Start session based on type
+    function startSession(type) {
+        let message = '';
+        
+        switch(type) {
+            case 'video':
+                message = 'Starting video consultation... Please allow camera and microphone access.';
+                break;
+            case 'audio':
+                message = 'Initiating audio call... Please allow microphone access.';
+                break;
+            case 'chat':
+                message = 'Opening chat with your doctor...';
+                break;
+            default:
+                message = 'Starting session...';
+        }
+        
+        alert(message);
+        
+        // Close the modal
+        document.querySelector('.fixed.inset-0').remove();
+        
+        // In a real app, this would redirect to the appropriate session page
+        // or initialize the video/audio/chat interface
+    }
     </script>
 </body>
 </html>
