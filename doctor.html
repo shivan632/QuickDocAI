@@ -247,6 +247,169 @@
         .animate-slide-up { animation: slide-up 0.4s ease-out; }
         .animate-bounce-in { animation: bounce-in 0.6s ease-out; }
         .animate-scale-in { animation: scale-in 0.5s ease-out; }
+
+        /* AI Diagnosis Section Styles */
+        .diagnosis-section {
+            padding: 2rem 0;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .diagnosis-container {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        
+        .diagnosis-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .diagnosis-result {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 400px;
+        }
+        
+        .diagnosis-input h3, .diagnosis-result h3 {
+            margin-bottom: 1rem;
+            color: #10b981;
+            font-size: 1.5rem;
+        }
+        
+        .symptom-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .symptom-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .symptom-tag {
+            background: rgba(59, 130, 246, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .symptom-tag i {
+            cursor: pointer;
+            color: #ef4444;
+        }
+        
+        .diagnosis-result-content {
+            display: none;
+        }
+        
+        .diagnosis-loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .disease-info {
+            margin-bottom: 1.5rem;
+        }
+        
+        .disease-name {
+            font-size: 1.8rem;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+        
+        .disease-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+        
+        .medicines-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .medicine-card-diagnosis {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
+            padding: 0.75rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .medicine-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #10b981;
+        }
+        
+        .medicine-dosage {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Dark mode adjustments for diagnosis section */
+        .dark .diagnosis-input,
+        .dark .diagnosis-result {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .symptom-input {
+            background: rgba(30, 41, 59, 0.8);
+            color: #f8fafc;
+        }
+
+        .dark .symptom-tag {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        .dark .medicine-card-diagnosis {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .diagnosis-container {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body class="light">
@@ -363,6 +526,7 @@
         <div class="flex space-x-4 mb-8">
             <button id="aiDoctorTab" class="px-6 py-3 bg-blue-500 text-white rounded-lg font-medium tab-active">AI Doctor</button>
             <button id="manualDoctorTab" class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg font-medium">Find Doctors Manually</button>
+            <button id="aiDiagnosisTab" class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg font-medium">AI Diagnosis</button>
         </div>
         
         <!-- AI Doctor Section -->
@@ -463,6 +627,63 @@
                             <li>Stiff neck or confusion</li>
                             <li>Difficulty breathing</li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Diagnosis Section -->
+        <div id="aiDiagnosisSection" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 hidden">
+            <div class="section-title mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">AI-Powered Disease Diagnosis</h2>
+                <p class="text-gray-600 dark:text-gray-400">Describe your symptoms and get instant AI analysis with treatment recommendations</p>
+            </div>
+            
+            <div class="diagnosis-container">
+                <div class="diagnosis-input">
+                    <h3>Describe Your Symptoms</h3>
+                    <input type="text" class="symptom-input" placeholder="Enter your symptoms (e.g. fever, headache, cough)">
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium w-full mb-4" id="analyze-btn">Analyze Symptoms</button>
+                    
+                    <h4 class="font-medium mb-2">Common Symptoms</h4>
+                    <div class="symptom-tags">
+                        <div class="symptom-tag">Fever <i class="fas fa-plus" data-symptom="fever"></i></div>
+                        <div class="symptom-tag">Headache <i class="fas fa-plus" data-symptom="headache"></i></div>
+                        <div class="symptom-tag">Cough <i class="fas fa-plus" data-symptom="cough"></i></div>
+                        <div class="symptom-tag">Fatigue <i class="fas fa-plus" data-symptom="fatigue"></i></div>
+                        <div class="symptom-tag">Nausea <i class="fas fa-plus" data-symptom="nausea"></i></div>
+                        <div class="symptom-tag">Sore Throat <i class="fas fa-plus" data-symptom="sore throat"></i></div>
+                    </div>
+                    
+                    <div class="selected-symptoms mt-4">
+                        <h4 class="font-medium mb-2">Your Symptoms</h4>
+                        <div class="symptom-tags" id="selected-symptoms"></div>
+                    </div>
+                </div>
+                
+                <div class="diagnosis-result">
+                    <h3>Diagnosis Results</h3>
+                    <div class="diagnosis-loading">
+                        <div class="loading-spinner"></div>
+                        <p>AI is analyzing your symptoms...</p>
+                    </div>
+                    <div class="diagnosis-result-content">
+                        <div class="disease-info">
+                            <h3 class="disease-name" id="disease-name">Common Cold</h3>
+                            <p class="disease-description" id="disease-description">A viral infection of your nose and throat (upper respiratory tract). It's usually harmless, although it might not feel that way.</p>
+                        </div>
+                        <div class="recommended-treatment">
+                            <h4 class="font-medium mb-2">Recommended Medicines</h4>
+                            <div class="medicines-list" id="medicines-list">
+                                <!-- Medicine cards will be inserted here by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="additional-advice mt-4">
+                            <h4 class="font-medium mb-2">Self-Care Tips</h4>
+                            <ul id="advice-list" class="list-disc list-inside space-y-1">
+                                <!-- Advice items will be inserted here by JavaScript -->
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -732,6 +953,85 @@
     </footer>
 
     <script>
+        // Disease and medicine database
+        const diseaseDatabase = {
+            "common cold": {
+                description: "A viral infection of your nose and throat (upper respiratory tract). It's usually harmless, although it might not feel that way.",
+                medicines: [
+                    { name: "Acetaminophen", dosage: "500mg every 4-6 hours" },
+                    { name: "Ibuprofen", dosage: "200-400mg every 4-6 hours" },
+                    { name: "Diphenhydramine", dosage: "25-50mg at bedtime" },
+                    { name: "Guaifenesin", dosage: "200-400mg every 4 hours" }
+                ],
+                advice: [
+                    "Get plenty of rest",
+                    "Drink fluids like water, juice, and clear broth",
+                    "Use a clean humidifier or cool mist vaporizer",
+                    "Gargle with salt water to soothe a sore throat"
+                ]
+            },
+            "influenza": {
+                description: "A viral infection that attacks your respiratory system — your nose, throat and lungs. Influenza is commonly called the flu.",
+                medicines: [
+                    { name: "Oseltamivir", dosage: "75mg twice daily for 5 days" },
+                    { name: "Zanamivir", dosage: "Two 5mg inhalations twice daily for 5 days" },
+                    { name: "Acetaminophen", dosage: "500mg every 4-6 hours as needed" },
+                    { name: "Ibuprofen", dosage: "200-400mg every 4-6 hours as needed" }
+                ],
+                advice: [
+                    "Stay home and get plenty of rest",
+                    "Drink clear fluids like water, broth or sports drinks",
+                    "Take antiviral drugs if prescribed by your doctor",
+                    "Avoid close contact with others to prevent spreading the flu"
+                ]
+            },
+            "migraine": {
+                description: "A headache that can cause severe throbbing pain or a pulsing sensation, usually on one side of the head.",
+                medicines: [
+                    { name: "Sumatriptan", dosage: "25-100mg as needed, maximum 200mg in 24 hours" },
+                    { name: "Rizatriptan", dosage: "5-10mg as needed, maximum 30mg in 24 hours" },
+                    { name: "Naproxen", dosage: "220-550mg initially, then 220mg every 8-12 hours" },
+                    { name: "Acetaminophen", dosage: "500-1000mg every 4-6 hours as needed" }
+                ],
+                advice: [
+                    "Rest in a quiet, dark room",
+                    "Apply a cold compress to your forehead or neck",
+                    "Stay hydrated by drinking water",
+                    "Avoid triggers like bright lights, loud noises, or strong smells"
+                ]
+            },
+            "sinusitis": {
+                description: "Inflammation or swelling of the tissue lining the sinuses. Healthy sinuses are filled with air, but when they become blocked and filled with fluid, germs can grow and cause an infection.",
+                medicines: [
+                    { name: "Amoxicillin", dosage: "500mg every 8 hours for 5-7 days" },
+                    { name: "Doxycycline", dosage: "100mg twice daily for 5-7 days" },
+                    { name: "Fluticasone nasal spray", dosage: "1-2 sprays in each nostril once daily" },
+                    { name: "Oxymetazoline nasal spray", dosage: "2-3 sprays in each nostril twice daily for up to 3 days" }
+                ],
+                advice: [
+                    "Apply warm compresses to your face",
+                    "Use a saline nasal spray several times per day",
+                    "Inhale steam from a hot shower or bowl of hot water",
+                    "Drink plenty of fluids to thin the mucus"
+                ]
+            },
+            "gastroenteritis": {
+                description: "An intestinal infection marked by watery diarrhea, abdominal cramps, nausea or vomiting, and sometimes fever.",
+                medicines: [
+                    { name: "Loperamide", dosage: "4mg initially, then 2mg after each loose stool, maximum 16mg daily" },
+                    { name: "Bismuth subsalicylate", dosage: "525mg every 30-60 minutes as needed, maximum 8 doses in 24 hours" },
+                    { name: "Ondansetron", dosage: "4-8mg every 8 hours as needed for nausea" },
+                    { name: "Oral rehydration solution", dosage: "As directed to maintain hydration" }
+                ],
+                advice: [
+                    "Let your stomach settle by avoiding solid foods for a few hours",
+                    "Suck on ice chips or take small sips of water",
+                    "Ease back into eating with bland, easy-to-digest foods",
+                    "Avoid dairy products, caffeine, alcohol, nicotine, and fatty or highly seasoned foods"
+                ]
+            }
+        };
+
         // Theme functionality
         document.addEventListener('DOMContentLoaded', function() {
             const themeToggle = document.getElementById('themeToggle');
@@ -780,21 +1080,36 @@
             // Tab functionality
             const aiDoctorTab = document.getElementById('aiDoctorTab');
             const manualDoctorTab = document.getElementById('manualDoctorTab');
+            const aiDiagnosisTab = document.getElementById('aiDiagnosisTab');
             const aiDoctorSection = document.getElementById('aiDoctorSection');
             const manualDoctorSection = document.getElementById('manualDoctorSection');
+            const aiDiagnosisSection = document.getElementById('aiDiagnosisSection');
             
             aiDoctorTab.addEventListener('click', function() {
                 aiDoctorTab.classList.add('tab-active');
                 manualDoctorTab.classList.remove('tab-active');
+                aiDiagnosisTab.classList.remove('tab-active');
                 aiDoctorSection.classList.remove('hidden');
                 manualDoctorSection.classList.add('hidden');
+                aiDiagnosisSection.classList.add('hidden');
             });
             
             manualDoctorTab.addEventListener('click', function() {
                 manualDoctorTab.classList.add('tab-active');
                 aiDoctorTab.classList.remove('tab-active');
+                aiDiagnosisTab.classList.remove('tab-active');
                 manualDoctorSection.classList.remove('hidden');
                 aiDoctorSection.classList.add('hidden');
+                aiDiagnosisSection.classList.add('hidden');
+            });
+            
+            aiDiagnosisTab.addEventListener('click', function() {
+                aiDiagnosisTab.classList.add('tab-active');
+                aiDoctorTab.classList.remove('tab-active');
+                manualDoctorTab.classList.remove('tab-active');
+                aiDiagnosisSection.classList.remove('hidden');
+                aiDoctorSection.classList.add('hidden');
+                manualDoctorSection.classList.add('hidden');
             });
             
             // Session button functionality
@@ -806,7 +1121,127 @@
             
             // Initialize medicine functionality
             initializeMedicineFunctionality();
+            initializeAIDiagnosis();
         });
+
+        // Initialize AI Diagnosis functionality
+        function initializeAIDiagnosis() {
+            // Symptom analysis functionality
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const symptomInput = document.querySelector('.symptom-input');
+            const selectedSymptomsContainer = document.getElementById('selected-symptoms');
+            const diagnosisLoading = document.querySelector('.diagnosis-loading');
+            const diagnosisResult = document.querySelector('.diagnosis-result-content');
+            const diseaseName = document.getElementById('disease-name');
+            const diseaseDescription = document.getElementById('disease-description');
+            const medicinesList = document.getElementById('medicines-list');
+            const adviceList = document.getElementById('advice-list');
+            
+            let selectedSymptoms = [];
+            
+            // Add symptom tags functionality
+            document.querySelectorAll('.symptom-tag i').forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const symptom = this.getAttribute('data-symptom');
+                    if (!selectedSymptoms.includes(symptom)) {
+                        selectedSymptoms.push(symptom);
+                        updateSelectedSymptoms();
+                    }
+                });
+            });
+            
+            // Analyze button click
+            analyzeBtn.addEventListener('click', function() {
+                const inputSymptoms = symptomInput.value.trim().toLowerCase();
+                
+                if (inputSymptoms) {
+                    const symptoms = inputSymptoms.split(',').map(s => s.trim());
+                    selectedSymptoms = [...new Set([...selectedSymptoms, ...symptoms])];
+                    updateSelectedSymptoms();
+                    symptomInput.value = '';
+                }
+                
+                if (selectedSymptoms.length === 0) {
+                    alert('Please enter or select at least one symptom');
+                    return;
+                }
+                
+                // Show loading
+                diagnosisLoading.style.display = 'flex';
+                diagnosisResult.style.display = 'none';
+                
+                // Simulate AI analysis
+                setTimeout(() => {
+                    diagnoseCondition();
+                }, 2000);
+            });
+            
+            function updateSelectedSymptoms() {
+                selectedSymptomsContainer.innerHTML = '';
+                selectedSymptoms.forEach(symptom => {
+                    const tag = document.createElement('div');
+                    tag.className = 'symptom-tag';
+                    tag.innerHTML = `${symptom} <i class="fas fa-times" data-symptom="${symptom}"></i>`;
+                    selectedSymptomsContainer.appendChild(tag);
+                });
+                
+                // Add event listeners to remove buttons
+                document.querySelectorAll('#selected-symptoms .symptom-tag i').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        const symptom = this.getAttribute('data-symptom');
+                        selectedSymptoms = selectedSymptoms.filter(s => s !== symptom);
+                        updateSelectedSymptoms();
+                    });
+                });
+            }
+            
+            function diagnoseCondition() {
+                // Simple matching algorithm - in a real app, this would be much more sophisticated
+                let matchedDisease = "common cold"; // Default
+                let maxMatches = 0;
+                
+                for (const [disease, info] of Object.entries(diseaseDatabase)) {
+                    // This is a simplified matching algorithm
+                    const matchCount = selectedSymptoms.filter(symptom => 
+                        disease.includes(symptom) || symptom.includes(disease)
+                    ).length;
+                    
+                    if (matchCount > maxMatches) {
+                        maxMatches = matchCount;
+                        matchedDisease = disease;
+                    }
+                }
+                
+                // Display results
+                const diseaseInfo = diseaseDatabase[matchedDisease];
+                diseaseName.textContent = matchedDisease.charAt(0).toUpperCase() + matchedDisease.slice(1);
+                diseaseDescription.textContent = diseaseInfo.description;
+                
+                // Display medicines
+                medicinesList.innerHTML = '';
+                diseaseInfo.medicines.forEach(medicine => {
+                    const medicineCard = document.createElement('div');
+                    medicineCard.className = 'medicine-card-diagnosis';
+                    medicineCard.innerHTML = `
+                        <div class="medicine-name">${medicine.name}</div>
+                        <div class="medicine-dosage">${medicine.dosage}</div>
+                    `;
+                    medicinesList.appendChild(medicineCard);
+                });
+                
+                // Display advice
+                adviceList.innerHTML = '';
+                diseaseInfo.advice.forEach(tip => {
+                    const li = document.createElement('li');
+                    li.textContent = tip;
+                    adviceList.appendChild(li);
+                });
+                
+                // Show results
+                diagnosisLoading.style.display = 'none';
+                diagnosisResult.style.display = 'block';
+            }
+        }
 
         // Enhanced AI Chat functionality with medicine recommendations
         function sendAIMessage(message) {
